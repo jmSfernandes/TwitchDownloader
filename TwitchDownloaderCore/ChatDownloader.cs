@@ -56,12 +56,12 @@ namespace TwitchDownloaderCore
             string cursor = "";
             int errorCount = 0;
 
-
+            List<GqlCommentResponse> commentResponse;
             while (latestMessage < videoEnd)
             {
                 cancellationToken.ThrowIfCancellationRequested();
 
-                List<GqlCommentResponse> commentResponse;
+                commentResponse = null;
                 try
                 {
                     var request = new HttpRequestMessage()
@@ -372,7 +372,8 @@ namespace TwitchDownloaderCore
                             percent = 0;
                             for (int j = 0; j < connectionCount; j++)
                             {
-                                percent += percentages[j];
+                                if (j < percentages.Length)
+                                    percent += percentages[j];
                             }
 
                             percent /= connectionCount;
@@ -401,15 +402,22 @@ namespace TwitchDownloaderCore
 
             if (downloadOptions.EmbedData && (downloadOptions.DownloadFormat is ChatFormat.Json or ChatFormat.Html))
             {
-                progress.Report(new ProgressReport() { ReportType = ReportType.NewLineStatus, Data = "Downloading + Embedding Images" });
+                progress.Report(new ProgressReport()
+                    {ReportType = ReportType.NewLineStatus, Data = "Downloading + Embedding Images"});
                 chatRoot.embeddedData = new EmbeddedData();
 
                 // This is the exact same process as in ChatUpdater.cs but not in a task oriented manner
                 // TODO: Combine this with ChatUpdater in a different file
-                List<TwitchEmote> thirdPartyEmotes = await TwitchHelper.GetThirdPartyEmotes(comments, chatRoot.streamer.id, downloadOptions.TempFolder, bttv: downloadOptions.BttvEmotes, ffz: downloadOptions.FfzEmotes, stv: downloadOptions.StvEmotes, cancellationToken: cancellationToken);
-                List<TwitchEmote> firstPartyEmotes = await TwitchHelper.GetEmotes(comments, downloadOptions.TempFolder, cancellationToken: cancellationToken);
-                List<ChatBadge> twitchBadges = await TwitchHelper.GetChatBadges(comments, chatRoot.streamer.id, downloadOptions.TempFolder, cancellationToken: cancellationToken);
-                List<CheerEmote> twitchBits = await TwitchHelper.GetBits(comments, downloadOptions.TempFolder, chatRoot.streamer.id.ToString(), cancellationToken: cancellationToken);
+                List<TwitchEmote> thirdPartyEmotes = await TwitchHelper.GetThirdPartyEmotes(comments,
+                    chatRoot.streamer.id, downloadOptions.TempFolder, bttv: downloadOptions.BttvEmotes,
+                    ffz: downloadOptions.FfzEmotes, stv: downloadOptions.StvEmotes,
+                    cancellationToken: cancellationToken);
+                List<TwitchEmote> firstPartyEmotes = await TwitchHelper.GetEmotes(comments, downloadOptions.TempFolder,
+                    cancellationToken: cancellationToken);
+                List<ChatBadge> twitchBadges = await TwitchHelper.GetChatBadges(comments, chatRoot.streamer.id,
+                    downloadOptions.TempFolder, cancellationToken: cancellationToken);
+                List<CheerEmote> twitchBits = await TwitchHelper.GetBits(comments, downloadOptions.TempFolder,
+                    chatRoot.streamer.id.ToString(), cancellationToken: cancellationToken);
 
                 cancellationToken.ThrowIfCancellationRequested();
 
@@ -424,6 +432,7 @@ namespace TwitchDownloaderCore
                     newEmote.height = emote.Height / emote.ImageScale;
                     chatRoot.embeddedData.thirdParty.Add(newEmote);
                 }
+
                 foreach (TwitchEmote emote in firstPartyEmotes)
                 {
                     EmbedEmoteData newEmote = new EmbedEmoteData();
@@ -434,6 +443,7 @@ namespace TwitchDownloaderCore
                     newEmote.height = emote.Height / emote.ImageScale;
                     chatRoot.embeddedData.firstParty.Add(newEmote);
                 }
+
                 foreach (ChatBadge badge in twitchBadges)
                 {
                     EmbedChatBadge newBadge = new EmbedChatBadge();
@@ -441,6 +451,7 @@ namespace TwitchDownloaderCore
                     newBadge.versions = badge.VersionsData;
                     chatRoot.embeddedData.twitchBadges.Add(newBadge);
                 }
+
                 foreach (CheerEmote bit in twitchBits)
                 {
                     EmbedCheerEmote newBit = new EmbedCheerEmote();
@@ -457,6 +468,7 @@ namespace TwitchDownloaderCore
                         newEmote.height = emotePair.Value.Height / emotePair.Value.ImageScale;
                         newBit.tierList.Add(emotePair.Key, newEmote);
                     }
+
                     chatRoot.embeddedData.twitchBits.Add(newBit);
                 }
             }
@@ -464,8 +476,10 @@ namespace TwitchDownloaderCore
             if (downloadOptions.DownloadFormat is ChatFormat.Json)
             {
                 //Best effort, but if we fail oh well
-                progress.Report(new ProgressReport() { ReportType = ReportType.NewLineStatus, Data = "Backfilling commenter info" });
-                List<string> userList = chatRoot.comments.DistinctBy(x => x.commenter._id).Select(x => x.commenter._id).ToList();
+                progress.Report(new ProgressReport()
+                    {ReportType = ReportType.NewLineStatus, Data = "Backfilling commenter info"});
+                List<string> userList = chatRoot.comments.DistinctBy(x => x.commenter._id).Select(x => x.commenter._id)
+                    .ToList();
                 Dictionary<string, User> userInfo = new Dictionary<string, User>();
                 int batchSize = 100;
                 bool failedInfo = false;
@@ -480,12 +494,16 @@ namespace TwitchDownloaderCore
                             userInfo[user.id] = user;
                         }
                     }
-                    catch { failedInfo = true; }
+                    catch
+                    {
+                        failedInfo = true;
+                    }
                 }
 
                 if (failedInfo)
                 {
-                    progress.Report(new ProgressReport() { ReportType = ReportType.Log, Data = "Failed to backfill some commenter info" });
+                    progress.Report(new ProgressReport()
+                        {ReportType = ReportType.Log, Data = "Failed to backfill some commenter info"});
                 }
 
                 foreach (var comment in chatRoot.comments)
@@ -504,10 +522,12 @@ namespace TwitchDownloaderCore
             switch (downloadOptions.DownloadFormat)
             {
                 case ChatFormat.Json:
-                    await ChatJson.SerializeAsync(downloadOptions.Filename, chatRoot, downloadOptions.Compression, cancellationToken);
+                    await ChatJson.SerializeAsync(downloadOptions.Filename, chatRoot, downloadOptions.Compression,
+                        cancellationToken);
                     break;
                 case ChatFormat.Html:
-                    await ChatHtml.SerializeAsync(downloadOptions.Filename, chatRoot, downloadOptions.EmbedData, cancellationToken);
+                    await ChatHtml.SerializeAsync(downloadOptions.Filename, chatRoot, downloadOptions.EmbedData,
+                        cancellationToken);
                     break;
                 case ChatFormat.Text:
                     await ChatText.SerializeAsync(downloadOptions.Filename, chatRoot, downloadOptions.TimeFormat);
