@@ -49,8 +49,8 @@ namespace TwitchDownloaderCore.Options
                 if (OutputFile == "" || GenerateMask == false)
                     return OutputFile;
 
-                string extension = Path.GetExtension(OutputFile);
-                int extensionIndex = OutputFile.LastIndexOf(extension);
+                string extension = Path.GetExtension(OutputFile)!;
+                int extensionIndex = OutputFile!.LastIndexOf(extension, StringComparison.Ordinal);
                 return string.Concat(OutputFile.AsSpan(0, extensionIndex), "_mask", extension);
             }
         }
@@ -91,5 +91,6 @@ namespace TwitchDownloaderCore.Options
         public bool DisperseCommentOffsets { get; set; } = true;
         public bool SkipDriveWaiting { get; set; } = false;
         public EmojiVendor EmojiVendor { get; set; } = EmojiVendor.GoogleNotoColor;
+        public int[] TimestampWidths { get; set; }
     }
 }

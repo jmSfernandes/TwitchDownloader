@@ -1,17 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
-  <!--
-    Microsoft ResX Schema
-
+  <!-- 
+    Microsoft ResX Schema 
+    
     Version 2.0
-
-    The primary goals of this format is to allow a simple XML format
-    that is mostly human readable. The generation and parsing of the
-    various data types are done through the TypeConverter classes
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
     associated with the data types.
-
+    
     Example:
-
+    
     ... ado.net/XML headers & schema ...
     <resheader name="resmimetype">text/microsoft-resx</resheader>
     <resheader name="version">2.0</resheader>
@@ -26,36 +26,36 @@
         <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
         <comment>This is a comment</comment>
     </data>
-
-    There are any number of "resheader" rows that contain simple
+                
+    There are any number of "resheader" rows that contain simple 
     name/value pairs.
-
-    Each data row contains a name, and value. The row also contains a
-    type or mimetype. Type corresponds to a .NET class that support
-    text/value conversion through the TypeConverter architecture.
-    Classes that don't support this are serialized and stored with the
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
     mimetype set.
-
-    The mimetype is used for serialized objects, and tells the
-    ResXResourceReader how to depersist the object. This is currently not
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
     extensible. For a given mimetype the value must be set accordingly:
-
-    Note - application/x-microsoft.net.object.binary.base64 is the format
-    that the ResXResourceWriter will generate, however the reader can
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
     read any of the formats listed below.
-
+    
     mimetype: application/x-microsoft.net.object.binary.base64
-    value   : The object must be serialized with
+    value   : The object must be serialized with 
             : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
             : and then encoded with base64 encoding.
-
+    
     mimetype: application/x-microsoft.net.object.soap.base64
-    value   : The object must be serialized with
+    value   : The object must be serialized with 
             : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
             : and then encoded with base64 encoding.
 
     mimetype: application/x-microsoft.net.object.bytearray.base64
-    value   : The object must be serialized into a byte array
+    value   : The object must be serialized into a byte array 
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
@@ -282,7 +282,7 @@
     <value>Input Arguments:</value>
   </data>
   <data name="FfmpegOptionsHyperlink" xml:space="preserve">
-    <value>Click here to learn about Ffmpeg options</value>
+    <value>Click here to learn about FFmpeg options</value>
   </data>
   <data name="FfmpegOutputArguments" xml:space="preserve">
     <value>Output Arguments:</value>
@@ -298,7 +298,7 @@
     <value>FFZ Emotes:</value>
   </data>
   <data name="FilenameTemplateParameters" xml:space="preserve">
-    <value>{title} {id} {date} {channel} {date_custom=""} {random_string} {crop_start} {crop_end} {crop_start_custom=""} {crop_end_custom=""}</value>
+    <value>{title} {id} {date} {channel} {date_custom=""} {random_string} {crop_start} {crop_end} {crop_start_custom=""} {crop_end_custom=""} {length} {length_custom=""} {views} {game}</value>
     <comment>Do not translate</comment>
   </data>
   <data name="FontColor" xml:space="preserve">
@@ -398,7 +398,7 @@
     <value>Encoding</value>
   </data>
   <data name="RenderTabFfmpeg" xml:space="preserve">
-    <value>Ffmpeg</value>
+    <value>FFmpeg</value>
   </data>
   <data name="RenderTabGeneral" xml:space="preserve">
     <value>General</value>
@@ -470,7 +470,7 @@
   <data name="TaskCancel" xml:space="preserve">
     <value>Cancel</value>
   </data>
-  <data name="TaskError" xml:space="preserve">
+  <data name="TaskErrorButton" xml:space="preserve">
     <value>Error</value>
   </data>
   <data name="TaskQueue" xml:space="preserve">
@@ -644,7 +644,7 @@
     <comment>Leave a trailing space</comment>
   </data>
   <data name="MessageDispersionTooltip" xml:space="preserve">
-    <value>In November 2022 a Twitch API change made chat messages download only in whole seconds. If there are multiple messages on a second, they will be intelligently distributed over the second to improve chat flow.</value>
+    <value>In November 2022 a Twitch API change made chat messages download only in whole seconds. This option uses additional metadata to attempt to restore messages to when they were actually sent. This may result in a different comment order.</value>
   </data>
   <data name="ChatCompression" xml:space="preserve">
     <value>Compression:</value>
@@ -732,7 +732,7 @@
     <value>Outline Scale:</value>
   </data>
   <data name="TimeSpanCustomFormatting" xml:space="preserve">
-    <value>crop_start_custom and crop_end_custom formattings are based on the</value>
+    <value>crop_start_custom, crop_end_custom, and length_custom formattings are based on the</value>
   </data>
   <data name="TimeSpanCustomFormattingHyperlink" xml:space="preserve">
     <value>C# standard TimeSpan format strings</value>
@@ -747,10 +747,10 @@
     <value>Please cancel the task or wait for it to finish before removing it</value>
   </data>
   <data name="UnableToDownloadFfmpeg" xml:space="preserve">
-    <value>Unable to download ffmpeg</value>
+    <value>Unable to download FFmpeg</value>
   </data>
   <data name="UnableToDownloadFfmpegFull" xml:space="preserve">
-    <value>Unable to download ffmpeg. Please manually download it from {0} and place the file at {1}</value>
+    <value>Unable to download FFmpeg. Please manually download it from {0} and place the file at {1}</value>
   </data>
   <data name="AlternateBackgroundColor" xml:space="preserve">
     <value>Alt Background Color:</value>
@@ -760,5 +760,50 @@
   </data>
   <data name="AlternateMessageBackgroundsTooltip" xml:space="preserve">
     <value>Alternates the background color of every other chat message to help tell them apart.</value>
+  </data>
+  <data name="EncodeClipMetadata" xml:space="preserve">
+    <value>Encode Metadata:</value>
+  </data>
+  <data name="MessageBoxTitleError" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="UnableToStartWindowsThemeWatcher" xml:space="preserve">
+    <value>Unable to start Windows application theme watcher. Real-time Windows theme synchronization has been disabled. Error code: {0}</value>
+  </data>
+  <data name="LabelVideosPerPage" xml:space="preserve">
+    <value>Videos per page:</value>
+  </data>
+  <data name="StatusDownloaderFFmpeg" xml:space="preserve">
+    <value>Downloading FFmpeg {0}%</value>
+  </data>
+  <data name="CopyVideoIDToClipboard" xml:space="preserve">
+    <value>Copy ID to clipboard</value>
+  </data>
+  <data name="CopyVideoURLToClipboard" xml:space="preserve">
+    <value>Copy URL to clipboard</value>
+  </data>
+  <data name="OpenVideoInBrowser" xml:space="preserve">
+    <value>Open in browser</value>
+  </data>
+  <data name="ResetSettingsConfirmationMessage" xml:space="preserve">
+    <value>Are you sure you want to restore all settings to their default values?</value>
+  </data>
+  <data name="ResetSettingsConfirmation" xml:space="preserve">
+    <value>Restore Settings Confirmation</value>
+  </data>
+  <data name="TheApplicationMustBeRestartedMessage" xml:space="preserve">
+    <value>The application must be restarted for changes to take effect.</value>
+  </data>
+  <data name="RestartTheApplication" xml:space="preserve">
+    <value>Please restart {0}</value><comment>{0} is the name of the application.</comment>
+  </data>
+  <data name="ButtonRestoreDefaultSettings" xml:space="preserve">
+    <value>Restore Defaults</value>
+  </data>
+  <data name="ButtonSaveSettings" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="ButtonCancelSettingsChanges" xml:space="preserve">
+    <value>Cancel</value>
   </data>
 </root>

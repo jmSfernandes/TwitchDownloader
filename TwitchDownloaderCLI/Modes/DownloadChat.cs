@@ -1,13 +1,12 @@
 ﻿using System;
 using System.IO;
-using System.Linq;
-using System.Text.RegularExpressions;
 using System.Threading;
 using TwitchDownloaderCLI.Modes.Arguments;
 using TwitchDownloaderCLI.Tools;
 using TwitchDownloaderCore;
 using TwitchDownloaderCore.Chat;
 using TwitchDownloaderCore.Options;
+using TwitchDownloaderCore.Tools;
 
 namespace TwitchDownloaderCLI.Modes
 {
@@ -39,9 +38,8 @@ namespace TwitchDownloaderCLI.Modes
                 Environment.Exit(1);
             }
 
-            var vodClipIdRegex = new Regex(@"(?<=^|(?:clips\.)?twitch\.tv\/(?:videos|\S+\/clip)?\/?)[\w-]+?(?=$|\?)");
-            var vodClipIdMatch = vodClipIdRegex.Match(inputOptions.Id);
-            if (!vodClipIdMatch.Success)
+            var vodClipIdMatch = TwitchRegex.MatchVideoOrClipId(inputOptions.Id);
+            if (vodClipIdMatch is not { Success: true })
             {
                 Console.WriteLine("[ERROR] - Unable to parse Vod/Clip ID/URL.");
                 Environment.Exit(1);
@@ -70,10 +68,10 @@ namespace TwitchDownloaderCLI.Modes
                 Compression = inputOptions.Compression,
                 TimeFormat = inputOptions.TimeFormat,
                 ConnectionCount = inputOptions.ChatConnections,
-                Quiet = inputOptions.Quiet,
-                BttvEmotes = (bool) inputOptions.BttvEmotes!,
-                FfzEmotes = (bool) inputOptions.FfzEmotes!,
-                StvEmotes = (bool) inputOptions.StvEmotes!,
+                Silent = inputOptions.Silent,
+                BttvEmotes = (bool)inputOptions.BttvEmotes!,
+                FfzEmotes = (bool)inputOptions.FfzEmotes!,
+                StvEmotes = (bool)inputOptions.StvEmotes!,
                 TempFolder = inputOptions.TempFolder
             };
 

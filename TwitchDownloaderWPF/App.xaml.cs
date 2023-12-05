@@ -4,7 +4,6 @@ using System.Windows;
 using System.Windows.Threading;
 using TwitchDownloaderWPF.Properties;
 using TwitchDownloaderWPF.Services;
-using TwitchDownloaderWPF.Translations;
 
 namespace TwitchDownloaderWPF
 {
@@ -15,12 +14,6 @@ namespace TwitchDownloaderWPF
     {
         public static ThemeService ThemeServiceSingleton { get; private set; }
         public static CultureService CultureServiceSingleton { get; private set; }
-        public static App AppSingleton { get; private set; }
-
-        public App()
-        {
-            AppSingleton = this;
-        }
 
         protected override void OnStartup(StartupEventArgs e)
         {
@@ -38,33 +31,36 @@ namespace TwitchDownloaderWPF
             var windowsThemeService = new WindowsThemeService();
             ThemeServiceSingleton = new ThemeService(this, windowsThemeService);
 
-            MainWindow = new MainWindow();
+            MainWindow = new MainWindow
+            {
+                WindowStartupLocation = WindowStartupLocation.CenterScreen
+            };
             MainWindow.Show();
         }
 
-        private void Current_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
+        private static void Current_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
         {
             var ex = e.Exception;
-            MessageBox.Show(ex.ToString(), Strings.FatalError, MessageBoxButton.OK, MessageBoxImage.Error);
+            MessageBox.Show(ex.ToString(), Translations.Strings.FatalError, MessageBoxButton.OK, MessageBoxImage.Error);
 
             Current?.Shutdown();
         }
 
-        private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             var ex = (Exception)e.ExceptionObject;
-            MessageBox.Show(ex.ToString(), Strings.FatalError, MessageBoxButton.OK, MessageBoxImage.Error);
+            MessageBox.Show(ex.ToString(), Translations.Strings.FatalError, MessageBoxButton.OK, MessageBoxImage.Error);
 
             Current?.Shutdown();
         }
 
-        public void RequestAppThemeChange()
+        public static void RequestAppThemeChange()
             => ThemeServiceSingleton.ChangeAppTheme();
 
-        public void RequestTitleBarChange()
-            => ThemeServiceSingleton.SetTitleBarTheme(Windows);
+        public static void RequestTitleBarChange()
+            => ThemeServiceSingleton.SetTitleBarTheme(Current.Windows);
 
-        public void RequestCultureChange()
+        public static void RequestCultureChange()
             => CultureServiceSingleton.SetApplicationCulture(Settings.Default.GuiCulture);
     }
 }

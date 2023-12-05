@@ -14,7 +14,8 @@
   </p>
 </p>
 
-
+[**Readme in Spanish**](README_es.md)  
+[**Readme in Turkish**](README_tr.md)
 
 ## Chat Render Example
 
@@ -25,7 +26,7 @@ https://user-images.githubusercontent.com/1060681/197653099-c3fd12c2-f03a-4580-8
 
 - Download Twitch VODs
 - Download Twitch Clips
-- Download chat for VODs and Clips, in either a [JSON with all the original information](https://pastebin.com/raw/YDgRe6X4), a browser HTML file, or a [plain text file](https://pastebin.com/raw/016azeQX)
+- Download chat for VODs and Clips, in either a [JSON with all the original information](https://github.com/lay295/TwitchDownloader/files/13495494/ExampleMoonMoonJsonFile.json), a browser HTML file, or a [plain text file](https://github.com/lay295/TwitchDownloader/files/13495523/ExampleMoonMoonTextFile.txt)
 - Update the contents of a previously generated JSON chat file with an option to save as another format
 - Use a previously generated JSON chat file to render the chat with Twitter Twemoji or Google Noto Color emojis and BTTV, FFZ, 7TV static and animated emotes
 
@@ -87,7 +88,7 @@ TwitchDownloaderCLI.exe chatrender -i %vodid%_chat.json -h 1080 -w 422 --framera
 1. Go to [Releases](https://github.com/lay295/TwitchDownloader/releases/) and download the latest version for Windows or [build from source](#building-from-source).
 2. Extract `TwitchDownloaderCLI.exe`.
 3. Browse to where you extracted the file in the terminal.
-4. If you do not have ffmpeg, you can install it via [Chocolatey package manager](https://community.chocolatey.org/), or you can get it as a standalone file from [ffmpeg.org](https://ffmpeg.org/download.html) or by using TwitchDownloaderCLI:
+4. If you do not have FFmpeg, you can install it via [Chocolatey package manager](https://community.chocolatey.org/), or you can get it as a standalone file from [ffmpeg.org](https://ffmpeg.org/download.html) or by using TwitchDownloaderCLI:
 ```
 TwitchDownloaderCLI.exe ffmpeg --download
 ```
@@ -106,7 +107,7 @@ TwitchDownloaderCLI.exe videodownload --id <vod-id-here> -o out.mp4
 ```
 sudo chmod +x TwitchDownloaderCLI
 ```
-6. a) If you do not have ffmpeg, you should install it via your distro package manager, however you can also get it as a standalone file from [ffmpeg.org](https://ffmpeg.org/download.html) or by using TwitchDownloaderCLI:
+6. a) If you do not have FFmpeg, you should install it via your distro package manager, however you can also get it as a standalone file from [ffmpeg.org](https://ffmpeg.org/download.html) or by using TwitchDownloaderCLI:
 ```
 ./TwitchDownloaderCLI ffmpeg --download
 ```
@@ -126,7 +127,7 @@ sudo chmod +x ffmpeg
 ```
 chmod +x TwitchDownloaderCLI
 ```
-4. a) If you do not have ffmpeg, you can install it via [Homebrew package manager](https://brew.sh/), or you can get it as a standalone file from [ffmpeg.org](https://ffmpeg.org/download.html) or by using TwitchDownloaderCLI:
+4. a) If you do not have FFmpeg, you can install it via [Homebrew package manager](https://brew.sh/), or you can get it as a standalone file from [ffmpeg.org](https://ffmpeg.org/download.html) or by using TwitchDownloaderCLI:
 ```
 ./TwitchDownloaderCLI ffmpeg --download
 ```
@@ -159,6 +160,7 @@ cd TwitchDownloader
 ```
 dotnet restore
 ```
+- Non-Windows devices may need to explicitly specify a project to restore, i.e. `dotnet restore TwitchDownloaderCLI`
 4. a) Build the GUI:
 ```
 dotnet publish TwitchDownloaderWPF -p:PublishProfile=Windows -p:DebugType=None -p:DebugSymbols=false
@@ -181,7 +183,20 @@ cd TwitchDownloaderCLI/bin/Release/net6.0/publish
 
 [MIT](./LICENSE.txt)
 
-# Credits
-[Noto Color Emoji](https://github.com/googlefonts/noto-emoji) © Google and contributors.
+# Third Party Credits
 
-[Twemoji](https://github.com/twitter/twemoji) © Twitter and contributors.
+Chat Renders are rendered with [SkiaSharp and HarfBuzzSharp](https://github.com/mono/SkiaSharp) © Microsoft Corporation.
+
+Chat Renders are encoded and Video Downloads are finalized with [FFmpeg](https://ffmpeg.org/) © The FFmpeg developers.
+
+Chat Renders may use [Noto Color Emoji](https://github.com/googlefonts/noto-emoji) © Google and contributors.
+
+Chat Renders may use [Twemoji](https://github.com/twitter/twemoji) © Twitter and contributors.
+
+Bundled FFmpeg binaries are fetched from [gyan.dev](https://www.gyan.dev/ffmpeg/) © Gyan Doshi.
+
+FFmpeg binaries fetched are runtime are downloaded using [Xabe.FFmpeg.Downloader](https://github.com/tomaszzmuda/Xabe.FFmpeg) © Xabe.
+
+Chat Html exports utilize the _Inter_ typeface hosted by the [Google Fonts API](https://fonts.google.com/) © Google.
+
+For a full list of utilized external libraries, see [THIRD-PARTY-LICENSES.txt](./TwitchDownloaderCore/Resources/THIRD-PARTY-LICENSES.txt).

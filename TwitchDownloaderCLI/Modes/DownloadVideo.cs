@@ -1,11 +1,11 @@
 ﻿using System;
 using System.IO;
-using System.Text.RegularExpressions;
 using System.Threading;
 using TwitchDownloaderCLI.Modes.Arguments;
 using TwitchDownloaderCLI.Tools;
 using TwitchDownloaderCore;
 using TwitchDownloaderCore.Options;
+using TwitchDownloaderCore.Tools;
 
 namespace TwitchDownloaderCLI.Modes
 {
@@ -15,12 +15,12 @@ namespace TwitchDownloaderCLI.Modes
         {
             FfmpegHandler.DetectFfmpeg(inputOptions.FfmpegPath);
 
-            var downloadOptions = GetDownloadOptions(inputOptions);
-
-            VideoDownloader videoDownloader = new(downloadOptions);
             Progress<ProgressReport> progress = new();
             progress.ProgressChanged += ProgressHandler.Progress_ProgressChanged;
-            videoDownloader.DownloadAsync(progress, new CancellationToken()).Wait();
+
+            var downloadOptions = GetDownloadOptions(inputOptions);
+            VideoDownloader videoDownloader = new(downloadOptions, progress);
+            videoDownloader.DownloadAsync(new CancellationToken()).Wait();
         }
 
         private static VideoDownloadOptions GetDownloadOptions(VideoDownloadArgs inputOptions)
@@ -31,12 +31,19 @@ namespace TwitchDownloaderCLI.Modes
                 Environment.Exit(1);
             }
 
-            var vodIdRegex = new Regex(@"(?<=^|twitch\.tv\/videos\/)\d+(?=$|\?)");
-            var vodIdMatch = vodIdRegex.Match(inputOptions.Id);
-            if (!vodIdMatch.Success)
+            var vodIdMatch = TwitchRegex.MatchVideoId(inputOptions.Id);
+            if (vodIdMatch is not { Success: true})
             {
                 Console.WriteLine("[ERROR] - Unable to parse Vod ID/URL.");
                 Environment.Exit(1);
+            }
+
+            if (!Path.HasExtension(inputOptions.OutputFile) && inputOptions.Quality is { Length: > 0 })
+            {
+                if (char.IsDigit(inputOptions.Quality[0]))
+                    inputOptions.OutputFile += ".mp4";
+                else if (char.ToLower(inputOptions.Quality[0]) is 'a')
+                    inputOptions.OutputFile += ".m4a";
             }
 
             VideoDownloadOptions downloadOptions = new()
@@ -46,7 +53,12 @@ namespace TwitchDownloaderCLI.Modes
                 Id = int.Parse(vodIdMatch.ValueSpan),
                 Oauth = inputOptions.Oauth,
                 Filename = inputOptions.OutputFile,
-                Quality = inputOptions.Quality,
+                Quality = Path.GetExtension(inputOptions.OutputFile)!.ToLower() switch
+                {
+                    ".mp4" => inputOptions.Quality,
+                    ".m4a" => "Audio",
+                    _ => throw new ArgumentException("Only MP4 and M4A audio files are supported.")
+                },
                 CropBeginning = inputOptions.CropBeginningTime > 0.0,
                 CropBeginningTime = inputOptions.CropBeginningTime,
                 CropEnding = inputOptions.CropEndingTime > 0.0,

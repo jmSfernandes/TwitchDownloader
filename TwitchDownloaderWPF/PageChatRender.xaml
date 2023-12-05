@@ -8,6 +8,7 @@
       xmlns:hc="https://handyorg.github.io/handycontrol"
       xmlns:fa="http://schemas.fontawesome.com/icons/"
       xmlns:local="clr-namespace:TwitchDownloaderWPF"
+      xmlns:behave="clr-namespace:TwitchDownloaderWPF.Behaviors"
       xmlns:lex="http://wpflocalizeextension.codeplex.com"
       lex:LocalizeDictionary.DesignCulture=""
       lex:ResxLocalizationProvider.DefaultAssembly="TwitchDownloaderWPF"
@@ -16,6 +17,11 @@
       d:DesignHeight="400" d:DesignWidth="800"
       Title="PageChatRender" Initialized="Page_Initialized" Unloaded="Page_Unloaded" Loaded="Page_Loaded"
       >
+    <Page.Resources>
+        <Style TargetType="{x:Type TextBox}" BasedOn="{StaticResource {x:Type TextBox}}">
+            <Setter Property="behave:TextBoxTripleClickBehavior.TripleClickSelectLine" Value="True" />
+        </Style>
+    </Page.Resources>
 
     <Grid Background="{DynamicResource AppBackground}">
         <Grid.ColumnDefinitions>
@@ -77,7 +83,7 @@
                         <CheckBox x:Name="checkTimestamp" HorizontalAlignment="Left" Margin="0,6,0,0" BorderBrush="{DynamicResource AppElementBorder}"/>
                         <CheckBox x:Name="checkSub" HorizontalAlignment="Left" Margin="0,6,0,0" BorderBrush="{DynamicResource AppElementBorder}"/>
                         <CheckBox x:Name="checkBadge" HorizontalAlignment="Left" Margin="0,6,0,0" BorderBrush="{DynamicResource AppElementBorder}"/>
-                        <TextBox x:Name="textUpdateTime" Text="1.0" Width="50" HorizontalAlignment="Left" Margin="0,7,0,0" Background="{DynamicResource AppElementBackground}" BorderBrush="{DynamicResource AppElementBorder}" Foreground="{DynamicResource AppText}"/>
+                        <TextBox x:Name="textUpdateTime" Text="0.5" Width="50" HorizontalAlignment="Left" Margin="0,7,0,0" Background="{DynamicResource AppElementBackground}" BorderBrush="{DynamicResource AppElementBorder}" Foreground="{DynamicResource AppText}"/>
                         <CheckBox x:Name="checkDispersion" HorizontalAlignment="Left" Margin="0,6,0,0" BorderBrush="{DynamicResource AppElementBorder}"/>
                         <CheckBox x:Name="checkAlternateMessageBackgrounds" HorizontalAlignment="Left" Margin="0,22,0,0" BorderBrush="{DynamicResource AppElementBorder}"/>
                     </StackPanel>

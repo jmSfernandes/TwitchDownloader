@@ -3,10 +3,14 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
+using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Interop;
 using TwitchDownloaderWPF.Properties;
+using TwitchDownloaderWPF.Services;
+using Xabe.FFmpeg;
 using Xabe.FFmpeg.Downloader;
-using static TwitchDownloaderWPF.App;
 
 namespace TwitchDownloaderWPF
 {
@@ -60,7 +64,7 @@ namespace TwitchDownloaderWPF
 
         private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            AppSingleton.RequestAppThemeChange();
+            App.RequestAppThemeChange();
 
             Main.Content = pageVodDownload;
             if (Settings.Default.UpgradeRequired)
@@ -70,15 +74,20 @@ namespace TwitchDownloaderWPF
                 Settings.Default.Save();
             }
 
+            var currentVersion = Version.Parse("1.53.6");
+            Title = $"Twitch Downloader v{currentVersion}";
+
+            // TODO: extract FFmpeg handling to a dedicated service
             if (!File.Exists("ffmpeg.exe"))
             {
+                var oldTitle = Title;
                 try
                 {
-                    await FFmpegDownloader.GetLatestVersion(FFmpegVersion.Full);
+                    await FFmpegDownloader.GetLatestVersion(FFmpegVersion.Full, new FfmpegDownloadProgress());
                 }
                 catch (Exception ex)
                 {
-                    if (MessageBox.Show(string.Format(Translations.Strings.UnableToDownloadFfmpegFull, "https://ffmpeg.org/download.html" , $"{Environment.CurrentDirectory}{Path.DirectorySeparatorChar}ffmpeg.exe"),
+                    if (MessageBox.Show(string.Format(Translations.Strings.UnableToDownloadFfmpegFull, "https://ffmpeg.org/download.html", Path.Combine(Environment.CurrentDirectory, "ffmpeg.exe")),
                             Translations.Strings.UnableToDownloadFfmpeg, MessageBoxButton.OKCancel, MessageBoxImage.Information) == MessageBoxResult.OK)
                     {
                         Process.Start(new ProcessStartInfo("https://ffmpeg.org/download.html") { UseShellExecute = true });
@@ -89,10 +98,14 @@ namespace TwitchDownloaderWPF
                         MessageBox.Show(ex.ToString(), Translations.Strings.VerboseErrorOutput, MessageBoxButton.OK, MessageBoxImage.Error);
                     }
                 }
+
+                Title = oldTitle;
             }
 
-            Version currentVersion = new Version("1.53.0");
-            Title = $"Twitch Downloader v{currentVersion}";
+            // Flash the window taskbar icon if it is not in the foreground. This is to mitigate a problem where
+            // it will sometimes start behind other windows, usually (but not always) due to the user's actions.
+            await FlashWindowIfNotForeground(TimeSpan.FromSeconds(3));
+
             AutoUpdater.InstalledVersion = currentVersion;
 #if !DEBUG
             if (AppContext.BaseDirectory.StartsWith(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)))
@@ -102,6 +115,63 @@ namespace TwitchDownloaderWPF
             }
             AutoUpdater.Start("https://downloader-update.twitcharchives.workers.dev");
 #endif
+        }
+
+        private async Task FlashWindowIfNotForeground(TimeSpan flashDuration)
+        {
+            var currentWindow = new WindowInteropHelper(this).Handle;
+            var foregroundWindow = NativeFunctions.GetForegroundWindow();
+            if (currentWindow == foregroundWindow)
+                return;
+
+            var flashWInfo = new NativeFunctions.FlashWInfo
+            {
+                StructSize = (uint)Marshal.SizeOf<NativeFunctions.FlashWInfo>(),
+                WindowHandle = currentWindow,
+                Flags = NativeFunctions.FlashWInfo.FLASHW_TRAY,
+                FlashCount = uint.MaxValue,
+                Timeout = 0
+            };
+            _ = NativeFunctions.FlashWindowEx(flashWInfo);
+
+            await Task.Delay(flashDuration);
+
+            var stopFlashWInfo = new NativeFunctions.FlashWInfo
+            {
+                StructSize = (uint)Marshal.SizeOf<NativeFunctions.FlashWInfo>(),
+                WindowHandle = currentWindow,
+                Flags = NativeFunctions.FlashWInfo.FLASHW_STOP,
+                FlashCount = 0,
+                Timeout = 0
+            };
+            _ = NativeFunctions.FlashWindowEx(stopFlashWInfo);
+        }
+
+        private class FfmpegDownloadProgress : IProgress<ProgressInfo>
+        {
+            private int _lastPercent = -1;
+
+            public void Report(ProgressInfo value)
+            {
+                var percent = (int)(value.DownloadedBytes / (double)value.TotalBytes * 100);
+
+                if (percent > _lastPercent)
+                {
+                    var window = Application.Current.MainWindow;
+                    if (window is null) return;
+
+                    _lastPercent = percent;
+
+                    var oldTitle = window.Title;
+                    if (oldTitle.IndexOf('-') == -1) oldTitle += " -";
+
+                    window.Title = string.Concat(
+                        oldTitle.AsSpan(0, oldTitle.IndexOf('-')),
+                        "- ",
+                        string.Format(Translations.Strings.StatusDownloaderFFmpeg, percent.ToString())
+                    );
+                }
+            }
         }
     }
 }

@@ -36,7 +36,7 @@ namespace TwitchDownloaderWPF.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Arial")]
+        [global::System.Configuration.DefaultSettingValueAttribute("Inter Embedded")]
         public string Font {
             get {
                 return ((string)(this["Font"]));
@@ -108,7 +108,7 @@ namespace TwitchDownloaderWPF.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        [global::System.Configuration.DefaultSettingValueAttribute("0.1")]
         public double UpdateTime {
             get {
                 return ((double)(this["UpdateTime"]));
@@ -780,7 +780,7 @@ namespace TwitchDownloaderWPF.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool DisperseCommentOffsets {
             get {
                 return ((bool)(this["DisperseCommentOffsets"]));
@@ -883,6 +883,18 @@ namespace TwitchDownloaderWPF.Properties {
             }
             set {
                 this["AlternateMessageBackgrounds"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool EncodeClipMetadata {
+            get {
+                return ((bool)(this["EncodeClipMetadata"]));
+            }
+            set {
+                this["EncodeClipMetadata"] = value;
             }
         }
     }

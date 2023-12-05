@@ -1,8 +1,9 @@
 ﻿using HandyControl.Data;
 using System;
 using System.IO;
-using System.Runtime.InteropServices;
+using System.Runtime.Versioning;
 using System.Windows;
+using System.Windows.Interop;
 using System.Windows.Media;
 using System.Xml.Serialization;
 using TwitchDownloaderWPF.Models;
@@ -12,7 +13,10 @@ namespace TwitchDownloaderWPF.Services
 {
     public class ThemeService
     {
-        private const int TITLEBAR_THEME_ATTRIBUTE = 20;
+        private const int WINDOWS_1809_BUILD_NUMBER = 17763;
+        private const int WINDOWS_2004_INSIDER_BUILD_NUMBER = 18985;
+        private const int USE_IMMERSIVE_DARK_MODE_ATTRIBUTE_BEFORE_2004 = 19;
+        private const int USE_IMMERSIVE_DARK_MODE_ATTRIBUTE = 20;
 
         private bool _darkAppTitleBar = false;
         private bool _darkHandyControl = false;
@@ -24,8 +28,14 @@ namespace TwitchDownloaderWPF.Services
         {
             if (!Directory.Exists("Themes"))
             {
-                Directory.CreateDirectory("Themes");
+                try
+                {
+                    Directory.CreateDirectory("Themes");
+                }
+                catch (IOException) { }
+                catch (UnauthorizedAccessException) { }
             }
+
             if (!DefaultThemeService.WriteIncludedThemes())
             {
                 MessageBox.Show(Translations.Strings.ThemesFailedToWrite, Translations.Strings.ThemesFailedToWrite, MessageBoxButton.OK, MessageBoxImage.Information);
@@ -39,7 +49,7 @@ namespace TwitchDownloaderWPF.Services
             if (!Settings.Default.GuiTheme.Equals("System", StringComparison.OrdinalIgnoreCase) && !File.Exists(Path.Combine("Themes", $"{Settings.Default.GuiTheme}.xaml")))
             {
                 MessageBox.Show(
-                    Translations.Strings.ThemeNotFoundMessage.Replace("{theme}", Settings.Default.GuiTheme + ".xaml"),
+                    Translations.Strings.ThemeNotFoundMessage.Replace("{theme}", $"{Settings.Default.GuiTheme}.xaml"),
                     Translations.Strings.ThemeNotFound,
                     MessageBoxButton.OK,
                     MessageBoxImage.Information);
@@ -51,26 +61,27 @@ namespace TwitchDownloaderWPF.Services
 
         private void WindowsThemeChanged(object sender, string newWindowsTheme)
         {
-            if (_wpfApplication.Windows.Count > 0)
+            if (_wpfApplication.Windows.Count == 0)
+                return;
+
+            if (Settings.Default.GuiTheme.Equals("System", StringComparison.OrdinalIgnoreCase))
             {
-                if (Settings.Default.GuiTheme.Equals("System", StringComparison.OrdinalIgnoreCase))
-                {
-                    ChangeAppTheme();
-                }
+                ChangeAppTheme();
             }
         }
 
         public void ChangeAppTheme()
         {
-            string newTheme = Settings.Default.GuiTheme;
+            var newTheme = Settings.Default.GuiTheme;
             if (newTheme.Equals("System", StringComparison.OrdinalIgnoreCase))
             {
                 newTheme = WindowsThemeService.GetWindowsTheme();
             }
-            ChangeThemePath(_wpfApplication, newTheme);
 
-            SkinType newSkin = _darkHandyControl ? SkinType.Dark : SkinType.Default;
-            SetHandyControlTheme(newSkin, _wpfApplication);
+            ChangeThemePath(newTheme);
+
+            var newSkin = _darkHandyControl ? SkinType.Dark : SkinType.Default;
+            SetHandyControlTheme(newSkin);
 
             if (_wpfApplication.Windows.Count > 0)
             {
@@ -78,65 +89,91 @@ namespace TwitchDownloaderWPF.Services
             }
         }
 
+        [SupportedOSPlatform("windows")]
         public void SetTitleBarTheme(WindowCollection windows)
         {
-            // If windows 10 build is before 1903, it doesn't support dark title bars
-            if (Environment.OSVersion.Version.Build < 18362)
-            {
+            if (Environment.OSVersion.Version.Major < 10 || Environment.OSVersion.Version.Build < WINDOWS_1809_BUILD_NUMBER)
                 return;
-            }
+
+            var shouldUseDarkTitleBar = Convert.ToInt32(_darkAppTitleBar);
+            var darkTitleBarAttribute = Environment.OSVersion.Version.Build < WINDOWS_2004_INSIDER_BUILD_NUMBER
+                ? USE_IMMERSIVE_DARK_MODE_ATTRIBUTE_BEFORE_2004
+                : USE_IMMERSIVE_DARK_MODE_ATTRIBUTE;
 
             foreach (Window window in windows)
             {
-                var windowHandle = new System.Windows.Interop.WindowInteropHelper(window).Handle;
-                NativeFunctions.SetWindowAttribute(windowHandle, TITLEBAR_THEME_ATTRIBUTE, ref _darkAppTitleBar, Marshal.SizeOf(_darkAppTitleBar));
+                var windowHandle = new WindowInteropHelper(window).Handle;
+                if (windowHandle == IntPtr.Zero)
+                    continue;
+
+                unsafe
+                {
+                    _ = NativeFunctions.SetWindowAttribute(windowHandle, darkTitleBarAttribute, &shouldUseDarkTitleBar, sizeof(int));
+                }
             }
 
-            Window _wnd = new()
+            Window wnd = new()
             {
-                SizeToContent = SizeToContent.WidthAndHeight
+                SizeToContent = SizeToContent.WidthAndHeight,
+                Top = int.MinValue + 1,
+                WindowStyle = WindowStyle.None,
+                ShowInTaskbar = false
             };
-            _wnd.Show();
-            _wnd.Close();
-            // Dark title bar is a bit buggy, requires window resize or focus change to fully apply
+            wnd.Show();
+            wnd.Close();
+            // Dark title bar is a bit buggy, requires window redraw (focus change, resize, transparency change) to fully apply.
+            // We *could* send a repaint message to win32.dll, but this solution works and is way easier.
             // Win11 might not have this issue but Win10 does so please leave this
         }
 
-        private void ChangeThemePath(App app, string newTheme)
+        private void ChangeThemePath(string newTheme)
         {
-            string[] themeFiles = Directory.GetFiles("Themes", "*.xaml");
-            string newThemeString = $"{Path.Combine("Themes", newTheme)}.xaml";
+            if (!Directory.Exists("Themes"))
+                return;
 
-            foreach (string themeFile in themeFiles)
+            var themeFiles = Directory.GetFiles("Themes", "*.xaml");
+            var newThemeString = Path.Combine("Themes", $"{newTheme}.xaml");
+
+            foreach (var themeFile in themeFiles)
             {
-                if (newThemeString.Equals(themeFile, StringComparison.OrdinalIgnoreCase))
-                {
-                    var xmlReader = new XmlSerializer(typeof(ResourceDictionaryModel));
-                    using var streamReader = new StreamReader(themeFile);
-                    var themeValues = (ResourceDictionaryModel)xmlReader.Deserialize(streamReader);
+                if (!newThemeString.Equals(themeFile, StringComparison.OrdinalIgnoreCase))
+                    continue;
 
-                    foreach (SolidColorBrushModel solidBrush in themeValues.SolidColorBrush)
+                var xmlReader = new XmlSerializer(typeof(ThemeResourceDictionaryModel));
+                using var streamReader = new StreamReader(themeFile);
+                var themeValues = (ThemeResourceDictionaryModel)xmlReader.Deserialize(streamReader)!;
+                var brushConverter = new BrushConverter();
+
+                foreach (var solidBrush in themeValues.SolidColorBrush)
+                {
+                    try
                     {
-                        app.Resources[solidBrush.Key] = (SolidColorBrush)new BrushConverter().ConvertFrom(solidBrush.Color);
+                        _wpfApplication.Resources[solidBrush.Key] = (SolidColorBrush)brushConverter.ConvertFrom(solidBrush.Color);
                     }
-                    foreach (BooleanModel boolean in themeValues.Boolean)
-                    {
-                        switch (boolean.Key)
-                        {
-                            case "DarkTitleBar": _darkAppTitleBar = boolean.Value; break;
-                            case "DarkHandyControl": _darkHandyControl = boolean.Value; break;
-                            default: break;
-                        }
-                    }
-                    return;
+                    catch (FormatException) { }
                 }
+
+                foreach (var boolean in themeValues.Boolean)
+                {
+                    switch (boolean.Key)
+                    {
+                        case "DarkTitleBar":
+                            _darkAppTitleBar = boolean.Value;
+                            break;
+                        case "DarkHandyControl":
+                            _darkHandyControl = boolean.Value;
+                            break;
+                    }
+                }
+
+                return;
             }
         }
 
-        private void SetHandyControlTheme(SkinType newSkin, App app)
+        private void SetHandyControlTheme(SkinType newSkin)
         {
-            app.Resources.MergedDictionaries[0].Source = new Uri($"pack://application:,,,/HandyControl;component/Themes/Skin{newSkin}.xaml", UriKind.Absolute);
-            app.Resources.MergedDictionaries[1].Source = new Uri($"pack://application:,,,/HandyControl;component/Themes/Theme.xaml", UriKind.Absolute);
+            _wpfApplication.Resources.MergedDictionaries[0].Source = new Uri($"pack://application:,,,/HandyControl;component/Themes/Skin{newSkin}.xaml", UriKind.Absolute);
+            _wpfApplication.Resources.MergedDictionaries[1].Source = new Uri($"pack://application:,,,/HandyControl;component/Themes/Theme.xaml", UriKind.Absolute);
         }
     }
 }

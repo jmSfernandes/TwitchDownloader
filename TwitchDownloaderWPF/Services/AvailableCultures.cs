@@ -19,10 +19,12 @@ namespace TwitchDownloaderWPF.Services
         // ISO 3166-1 alpha-2: https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2#Officially_assigned_code_elements
 
         public static readonly Culture English;
+        public static readonly Culture Spanish;
         public static readonly Culture French;
         public static readonly Culture Polish;
         public static readonly Culture Russian;
         public static readonly Culture Turkish;
+        public static readonly Culture Ukrainian;
         public static readonly Culture SimplifiedChinese;
 
         public static readonly Culture[] All;
@@ -32,10 +34,12 @@ namespace TwitchDownloaderWPF.Services
             All = new[]
             {
                 English = new Culture("en-US", "English"),
+                Spanish = new Culture("es-ES", "Spanish"),
                 French = new Culture("fr-FR", "Français"),
                 Polish = new Culture("pl-PL", "Polski"),
                 Russian = new Culture("ru-RU", "Русский"),
                 Turkish = new Culture("tr-TR", "Türkçe"),
+                Ukrainian = new Culture("uk-ua", "Українська"),
                 SimplifiedChinese = new Culture("zh-CN", "简体中文")
             };
         }

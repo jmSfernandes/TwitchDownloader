@@ -12,7 +12,7 @@ A Windows WPF desktop application that implements the core functionality wrapped
       - [Rendering](#rendering)
       - [Scaling](#scaling)
       - [Encoding](#encoding)
-      - [Ffmpeg](#ffmpeg)
+      - [FFmpeg](#ffmpeg)
       - [Optimizing Render Speeds](#optimizing-render-speeds)
     - [Task Queue](#task-queue)
     - [Settings](#settings)
@@ -53,9 +53,11 @@ Downloads a clip from Twitch.
 ![Figure 2.1](Images/clipExample.png)
 <br><sup>*Figure 2.1*</sup>
 
-To get started, input a valid link or ID to a clip. From there the the download options will unlock, allowing you to customize the job.
+To get started, input a valid link or ID to a clip. From there the download options will unlock, allowing you to customize the job.
 
 **Quality**: Selects the quality of the clip before downloading.
+
+**Encode Metadata**: Encodes clip metadata such as the airing date and clip ID into the final mp4 file using FFmpeg.
 
 **Download**: Starts the download job. If instead you open the dropdown, you can send it to the [Task Queue](#task-queue) with the *Enqueue* option. The current download settings will be used in both scenarios.
 
@@ -170,7 +172,7 @@ the *Partial Render* option to render a smaller section of the chat, see Figure 
 
 **Update Rate**: The time in seconds between drawing the next batch of comments. Lower numbers makes chat flow more readable but will marginally increase render times.
 
-**Dispersion**: In November 2022 a Twitch API change made chat messages download only in whole seconds. If dispersion is enabled and there are multiple messages on a second, they will be intelligently distributed over the second to improve chat flow. Requires an update rate less than 1.0 for effective results.
+**Dispersion**: In November 2022 a Twitch API change made chat messages download only in whole seconds. This option uses additional metadata to attempt to restore messages to when they were actually sent. This may result in a different comment order. Requires an update rate less than 1.0 for effective results.
 
 **Alternate Backgrounds**: Alternates the background color of every other chat message to help tell them apart.
 
@@ -224,15 +226,15 @@ the *Partial Render* option to render a smaller section of the chat, see Figure 
 
 **Sharpening**: Applies a sharpening filter to the rendered video. Slightly increases render time and file size. Works best with _Font Size_ 24 or larger.
 
-#### <ins>Ffmpeg</ins>
+#### <ins>FFmpeg</ins>
 
-**Warning: modifying Ffmpeg arguments may cause pipe errors!**
+**Warning: modifying FFmpeg arguments may cause pipe errors!**
 
-**Input Arguments**: The arguments for controlling the rendered input to ffmpeg.
+**Input Arguments**: The arguments for controlling the rendered input to FFmpeg.
 
-**Output Arguments**: The arguments for controlling the encoded output from ffmpeg.
+**Output Arguments**: The arguments for controlling the encoded output from FFmpeg.
 
-**Reset To Defaults**: Reset both of the Ffmpeg arguments to default.
+**Reset To Defaults**: Reset both of the FFmpeg arguments to default.
 
 #### <ins>Optimizing Render Speeds</ins>
 
@@ -334,7 +336,7 @@ An uncommon error can be characterized by a popup titled "Fatal Error" or an unf
 - Cannot access child value on Newtonsoft.Json.Linq.JValue.
 - Response status code does not indicate success: 404 (Not Found).
 - The pipe has been ended.
-   - An issue occurred with Ffmpeg. Reset the arguments to default and try again. If still no success create a new issue on the github.
+   - An issue occurred with FFmpeg. Reset the arguments to default and try again. If still no success create a new issue on the github.
 
 To help us find the origin of an error, please enable `Verbose Errors` in the [settings](#settings) and take a screen capture of the resulting popup titled "Verbose Error Output".
 

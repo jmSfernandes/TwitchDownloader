@@ -13,15 +13,16 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <UseWPF>true</UseWPF>
     <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
-	<EnableNETAnalyzers>false</EnableNETAnalyzers>
-	<Platforms>AnyCPU;x64</Platforms>
+    <EnableNETAnalyzers>false</EnableNETAnalyzers>
+    <Platforms>AnyCPU;x64</Platforms>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <!--TODO: <Nullable>enable</Nullable> once we have required keyword-->
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>icon.ico</ApplicationIcon>
@@ -41,29 +42,28 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Themes\Dark.xaml">
-      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
-      <SubType>Designer</SubType>
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="Themes\Light.xaml">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="Themes\README.txt" />
+    <EmbeddedResource Include="Themes\README.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TwitchDownloaderCore\TwitchDownloaderCore.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="DotNetProjects.Extended.Wpf.Toolkit" Version="5.0.103" />
+    <PackageReference Include="DotNetProjects.Extended.Wpf.Toolkit" Version="5.0.106" />
     <PackageReference Include="FontAwesome5" Version="2.1.11" />
     <PackageReference Include="HandyControl" Version="3.4.0" />
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageReference Include="Ookii.Dialogs.Wpf" Version="5.0.1" />
-    <PackageReference Include="System.Management" Version="7.0.2" />
-    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="6.0.0" />
+    <PackageReference Include="System.Management" Version="8.0.0" />
     <PackageReference Include="WPFLocalizeExtension" Version="3.10.0" />
     <PackageReference Include="Xabe.FFmpeg.Downloader" Version="5.2.6" />
-    <PackageReference Include="Autoupdater.NET.Official" Version="1.8.3" />
+    <PackageReference Include="Autoupdater.NET.Official" Version="1.8.4" />
     <PackageReference Include="Emoji.Wpf" Version="0.3.4" />
     <PackageReference Include="WpfAnimatedGif" Version="2.0.2" />
   </ItemGroup>
@@ -84,6 +84,9 @@
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Strings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Update="Translations\Strings.es.resx">
+      <DependentUpon>Strings.resx</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Update="Translations\Strings.fr.resx">
       <DependentUpon>Strings.resx</DependentUpon>
     </EmbeddedResource>
@@ -93,10 +96,13 @@
     <EmbeddedResource Update="Translations\Strings.tr.resx">
       <DependentUpon>Strings.resx</DependentUpon>
     </EmbeddedResource>
-	  <EmbeddedResource Update="Translations\Strings.ru.resx">
+        <EmbeddedResource Update="Translations\Strings.uk.resx">
       <DependentUpon>Strings.resx</DependentUpon>
     </EmbeddedResource>
-	<EmbeddedResource Update="Translations\Strings.zh.resx">
+    <EmbeddedResource Update="Translations\Strings.ru.resx">
+      <DependentUpon>Strings.resx</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Translations\Strings.zh.resx">
       <DependentUpon>Strings.resx</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
@@ -106,9 +112,4 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
   </ItemGroup>
-  <PropertyGroup>
-    <PostBuildEvent></PostBuildEvent>
-    <AssemblyVersion></AssemblyVersion>
-    <FileVersion></FileVersion>
-  </PropertyGroup>
 </Project>

@@ -3,14 +3,15 @@ using System;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using TwitchDownloaderCore;
 using TwitchDownloaderCore.Chat;
+using TwitchDownloaderCore.Extensions;
 using TwitchDownloaderCore.Options;
 using TwitchDownloaderCore.Tools;
 using TwitchDownloaderCore.TwitchObjects.Gql;
@@ -32,6 +33,8 @@ namespace TwitchDownloaderWPF
         public int streamerId;
         public DateTime currentVideoTime;
         public TimeSpan vodLength;
+        public int viewCount;
+        public string game;
         private CancellationTokenSource _cancellationTokenSource;
 
         public PageChatDownload()
@@ -93,6 +96,11 @@ namespace TwitchDownloaderWPF
 
         private async void btnGetInfo_Click(object sender, RoutedEventArgs e)
         {
+            await GetVideoInfo();
+        }
+
+        private async Task GetVideoInfo()
+        {
             string id = ValidateUrl(textUrl.Text.Trim());
             if (string.IsNullOrWhiteSpace(id))
             {
@@ -109,20 +117,14 @@ namespace TwitchDownloaderWPF
                 {
                     GqlVideoResponse videoInfo = await TwitchHelper.GetVideoInfo(int.Parse(downloadId));
 
-                    try
-                    {
-                        string thumbUrl = videoInfo.data.video.thumbnailURLs.FirstOrDefault();
-                        imgThumbnail.Source = await ThumbnailService.GetThumb(thumbUrl);
-                    }
-                    catch
+                    var thumbUrl = videoInfo.data.video.thumbnailURLs.FirstOrDefault();
+                    if (!ThumbnailService.TryGetThumb(thumbUrl, out var image))
                     {
                         AppendLog(Translations.Strings.ErrorLog + Translations.Strings.UnableToFindThumbnail);
-                        var (success, image) = await ThumbnailService.TryGetThumb(ThumbnailService.THUMBNAIL_MISSING_URL);
-                        if (success)
-                        {
-                            imgThumbnail.Source = image;
-                        }
+                        _ = ThumbnailService.TryGetThumb(ThumbnailService.THUMBNAIL_MISSING_URL, out image);
                     }
+                    imgThumbnail.Source = image;
+
                     vodLength = TimeSpan.FromSeconds(videoInfo.data.video.lengthSeconds);
                     textTitle.Text = videoInfo.data.video.title;
                     textStreamer.Text = videoInfo.data.video.owner.displayName;
@@ -130,10 +132,12 @@ namespace TwitchDownloaderWPF
                     textCreatedAt.Text = Settings.Default.UTCVideoTime ? videoTime.ToString(CultureInfo.CurrentCulture) : videoTime.ToLocalTime().ToString(CultureInfo.CurrentCulture);
                     currentVideoTime = Settings.Default.UTCVideoTime ? videoTime : videoTime.ToLocalTime();
                     streamerId = int.Parse(videoInfo.data.video.owner.id);
-                    var urlTimeCodeMatch = Regex.Match(textUrl.Text, @"(?<=\?t=)\d+h\d+m\d+s");
+                    viewCount = videoInfo.data.video.viewCount;
+                    game = videoInfo.data.video.game?.displayName ?? "Unknown";
+                    var urlTimeCodeMatch = TwitchRegex.UrlTimeCode.Match(textUrl.Text);
                     if (urlTimeCodeMatch.Success)
                     {
-                        var time = TimeSpanExtensions.ParseTimeCode(urlTimeCodeMatch.ValueSpan);
+                        var time = UrlTimeCode.Parse(urlTimeCodeMatch.ValueSpan);
                         checkCropStart.IsChecked = true;
                         numStartHour.Value = time.Hours;
                         numStartMinute.Value = time.Minutes;
@@ -159,20 +163,14 @@ namespace TwitchDownloaderWPF
                     string clipId = downloadId;
                     GqlClipResponse clipInfo = await TwitchHelper.GetClipInfo(clipId);
 
-                    try
-                    {
-                        string thumbUrl = clipInfo.data.clip.thumbnailURL;
-                        imgThumbnail.Source = await ThumbnailService.GetThumb(thumbUrl);
-                    }
-                    catch
+                    var thumbUrl = clipInfo.data.clip.thumbnailURL;
+                    if (!ThumbnailService.TryGetThumb(thumbUrl, out var image))
                     {
                         AppendLog(Translations.Strings.ErrorLog + Translations.Strings.UnableToFindThumbnail);
-                        var (success, image) = await ThumbnailService.TryGetThumb(ThumbnailService.THUMBNAIL_MISSING_URL);
-                        if (success)
-                        {
-                            imgThumbnail.Source = image;
-                        }
+                        _ = ThumbnailService.TryGetThumb(ThumbnailService.THUMBNAIL_MISSING_URL, out image);
                     }
+                    imgThumbnail.Source = image;
+
                     TimeSpan clipLength = TimeSpan.FromSeconds(clipInfo.data.clip.durationSeconds);
                     textStreamer.Text = clipInfo.data.clip.broadcaster.displayName;
                     var clipCreatedAt = clipInfo.data.clip.createdAt;
@@ -214,8 +212,8 @@ namespace TwitchDownloaderWPF
 
         public static string ValidateUrl(string text)
         {
-            var vodClipIdMatch = Regex.Match(text, @"(?<=^|(?:clips\.)?twitch\.tv\/(?:videos|\S+\/clip)?\/?)[\w-]+?(?=$|\?)");
-            return vodClipIdMatch.Success
+            var vodClipIdMatch = TwitchRegex.MatchVideoOrClipId(text);
+            return vodClipIdMatch is { Success: true }
                 ? vodClipIdMatch.Value
                 : null;
         }
@@ -243,10 +241,10 @@ namespace TwitchDownloaderWPF
             else if (radioCompressionGzip.IsChecked == true)
                 options.Compression = ChatCompression.Gzip;
 
-            options.EmbedData = (bool)checkEmbed.IsChecked;
-            options.BttvEmotes = (bool)checkBttvEmbed.IsChecked;
-            options.FfzEmotes = (bool)checkFfzEmbed.IsChecked;
-            options.StvEmotes = (bool)checkStvEmbed.IsChecked;
+            options.EmbedData = checkEmbed.IsChecked.GetValueOrDefault();
+            options.BttvEmotes = checkBttvEmbed.IsChecked.GetValueOrDefault();
+            options.FfzEmotes = checkFfzEmbed.IsChecked.GetValueOrDefault();
+            options.StvEmotes = checkStvEmbed.IsChecked.GetValueOrDefault();
             options.Filename = filename;
             options.ConnectionCount = (int)numChatDownloadConnections.Value;
             return options;
@@ -292,7 +290,11 @@ namespace TwitchDownloaderWPF
 
         private void btnSettings_Click(object sender, RoutedEventArgs e)
         {
-            WindowSettings settings = new WindowSettings();
+            var settings = new WindowSettings
+            {
+                Owner = Application.Current.MainWindow,
+                WindowStartupLocation = WindowStartupLocation.CenterOwner
+            };
             settings.ShowDialog();
             btnDonate.Visibility = Settings.Default.HideDonation ? Visibility.Collapsed : Visibility.Visible;
         }
@@ -463,7 +465,8 @@ namespace TwitchDownloaderWPF
 
             saveFileDialog.FileName = FilenameService.GetFilename(Settings.Default.TemplateChat, textTitle.Text, downloadId, currentVideoTime, textStreamer.Text,
                 checkCropStart.IsChecked == true ? new TimeSpan((int)numStartHour.Value, (int)numStartMinute.Value, (int)numStartSecond.Value) : TimeSpan.Zero,
-                checkCropEnd.IsChecked == true ? new TimeSpan((int)numEndHour.Value, (int)numEndMinute.Value, (int)numEndSecond.Value) : vodLength);
+                checkCropEnd.IsChecked == true ? new TimeSpan((int)numEndHour.Value, (int)numEndMinute.Value, (int)numEndSecond.Value) : vodLength,
+                viewCount.ToString(), game);
 
             if (saveFileDialog.ShowDialog() != true)
             {
@@ -562,19 +565,32 @@ namespace TwitchDownloaderWPF
 
         private void checkCropStart_OnCheckStateChanged(object sender, RoutedEventArgs e)
         {
-            SetEnabledCropStart((bool)checkCropStart.IsChecked);
+            SetEnabledCropStart(checkCropStart.IsChecked.GetValueOrDefault());
         }
 
         private void checkCropEnd_OnCheckStateChanged(object sender, RoutedEventArgs e)
         {
-            SetEnabledCropEnd((bool)checkCropEnd.IsChecked);
+            SetEnabledCropEnd(checkCropEnd.IsChecked.GetValueOrDefault());
         }
 
 
         private void MenuItemEnqueue_Click(object sender, RoutedEventArgs e)
         {
-            WindowQueueOptions queueOptions = new WindowQueueOptions(this);
+            var queueOptions = new WindowQueueOptions(this)
+            {
+                Owner = Application.Current.MainWindow,
+                WindowStartupLocation = WindowStartupLocation.CenterOwner
+            };
             queueOptions.ShowDialog();
+        }
+
+        private async void TextUrl_OnKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                await GetVideoInfo();
+                e.Handled = true;
+            }
         }
     }
 }

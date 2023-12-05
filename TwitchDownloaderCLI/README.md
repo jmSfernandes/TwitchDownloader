@@ -21,7 +21,7 @@ A cross platform command line tool that can do the main functions of the GUI pro
 The ID or URL of the VOD to download.
 
 **-o / --output (REQUIRED)**
-File the program will output to.
+File the program will output to. File extension will be used to determine download type. Valid extensions are: `.mp4` and `.m4a`.
 
 **-q / --quality**
 The quality the program will attempt to download, for example "1080p60", if not found will download highest quality stream.
@@ -44,11 +44,13 @@ Extra example, if I wanted only seconds 3-6 in a 10 second stream I would do `-b
 OAuth access token to download subscriber only VODs. <ins>**DO NOT SHARE YOUR OAUTH TOKEN WITH ANYONE.**</ins>
 
 **--ffmpeg-path**
-Path to ffmpeg executable.
+Path to FFmpeg executable.
 
 **--temp-path**
 Path to temporary folder for cache.
 
+**--banner**
+(Default: `true`) Displays a banner containing version and copyright information.
 
 ## Arguments for mode clipdownload
 <sup>Downloads a clip from Twitch</sup>
@@ -64,6 +66,18 @@ The quality the program will attempt to download, for example "1080p60", if not 
 
 **--bandwidth**
 (Default: `-1`) The maximum bandwidth the clip downloader is allowed to use in kibibytes per second (KiB/s), or `-1` for no maximum.
+
+**--encode-metadata**
+(Default: `true`) Uses FFmpeg to add metadata to the clip output file.
+
+**--ffmpeg-path**
+Path to FFmpeg executable.
+
+**--temp-path**
+Path to temporary folder for cache.
+
+**--banner**
+(Default: `true`) Displays a banner containing version and copyright information.
 
 ## Arguments for mode chatdownload
 <sup>Downloads the chat of a VOD, highlight, or clip</sup>
@@ -96,11 +110,19 @@ Time in seconds to crop ending. For example if I had a 10 second stream but only
 (Default: `true`) 7TV emote embedding. Requires `-E / --embed-images`.
 
 **--timestamp-format**
-(Default: `Relative`) Sets the timestamp format for .txt chat logs. Valid values are: `Utc`, `Relative`, and `None`.
+(Default: `Relative`) Sets the timestamp format for .txt chat logs. Valid values are: `Utc`, `UtcFull`, `Relative`, and `None`.
 
 **--chat-connections**
 (Default: `4`) The number of parallel downloads for chat.
 
+**--silent**
+(Default: `false`) Suppresses progress console output.
+
+**--temp-path**
+Path to temporary folder for cache.
+
+**--banner**
+(Default: `true`) Displays a banner containing version and copyright information.
 
 ## Arguments for mode chatupdate
 <sup>Updates the embedded emotes, badges, bits, and crops of a chat download and/or converts a JSON chat to another format</sup>
@@ -141,6 +163,8 @@ Path to output file. File extension will be used to determine new chat type. Val
 **--temp-path**
 Path to temporary folder for cache.
 
+**--banner**
+(Default: `true`) Displays a banner containing version and copyright information.
 
 ## Arguments for mode chatrender
 <sup>Renders a chat JSON as a video</sup>
@@ -224,10 +248,10 @@ File the program will output to.
 (Default: `0.2`) Time in seconds to update chat render output.
 
 **--input-args**
-(Default: `-framerate {fps} -f rawvideo -analyzeduration {max_int} -probesize {max_int} -pix_fmt bgra -video_size {width}x{height} -i -`) Input arguments for ffmpeg chat render.
+(Default: `-framerate {fps} -f rawvideo -analyzeduration {max_int} -probesize {max_int} -pix_fmt bgra -video_size {width}x{height} -i -`) Input arguments for FFmpeg chat render.
 
 **--output-args**
-(Default: `-c:v libx264 -preset veryfast -crf 18 -pix_fmt yuv420p "{save_path}"`) Output arguments for ffmpeg chat render.
+(Default: `-c:v libx264 -preset veryfast -crf 18 -pix_fmt yuv420p "{save_path}"`) Output arguments for FFmpeg chat render.
 
 **--ignore-users**
 (Default: ` `) List of usernames to ignore when rendering, separated by commas. Not case-sensitive.
@@ -241,7 +265,7 @@ File the program will output to.
 Other = `1`, Broadcaster = `2`, Moderator = `4`, VIP = `8`, Subscriber = `16`, Predictions = `32`, NoAudioVisual = `64`, PrimeGaming = `128`
 
 **--dispersion**
-(Default: `false`) In November 2022 a Twitch API change made chat messages download only in whole seconds. If there are multiple messages on a second, they will be intelligently distributed over the second to improve chat flow. Requires an update rate less than 1.0 for effective results.
+(Default: `false`) In November 2022 a Twitch API change made chat messages download only in whole seconds. This option uses additional metadata to attempt to restore messages to when they were actually sent. This may result in a different comment order. Requires an update rate less than 1.0 for effective results.
 
 **--alternate-backgrounds**
 (Default: `false`) Alternates the background color of every other chat message to help tell them apart.
@@ -253,13 +277,13 @@ Other = `1`, Broadcaster = `2`, Moderator = `4`, VIP = `8`, Subscriber = `16`, P
 (Default: `notocolor`) The emoji vendor used for rendering emojis. Valid values are: `twitter` / `twemoji`, `google` / `notocolor`, `none`.
 
 **--ffmpeg-path**
-(Default: ` `) Path to ffmpeg executable.
+(Default: ` `) Path to FFmpeg executable.
 
 **--temp-path**
 (Default: ` `) Path to temporary folder for cache.
 
 **--verbose-ffmpeg**
-(Default: `false`) Prints every message from ffmpeg.
+(Default: `false`) Prints every message from FFmpeg.
 
 **--skip-drive-waiting**
 (Default: `false`) Do not wait for the output drive to transmit a ready signal before writing the next frame. Waiting is usually only necessary on low-end USB drives. Skipping can result in 1-5% render speed increases.
@@ -294,12 +318,18 @@ Other = `1`, Broadcaster = `2`, Moderator = `4`, VIP = `8`, Subscriber = `16`, P
 **--scale-highlight-indent**
 (Default: `1.0`) Number to scale highlight indent size (sub messages).
 
+**--banner**
+(Default: `true`) Displays a banner containing version and copyright information.
+
+
 ## Arguments for mode ffmpeg
-<sup>Manage standalone ffmpeg</sup>
+<sup>Manage standalone FFmpeg</sup>
 
 **-d / --download**
-(Default: `false`) Downloads ffmpeg as a standalone file.
+(Default: `false`) Downloads FFmpeg as a standalone file.
 
+**--banner**
+(Default: `true`) Displays a banner containing version and copyright information.
 
 ## Arguments for mode cache
 <sup>Manage the working cache.</sup>
@@ -309,6 +339,9 @@ Other = `1`, Broadcaster = `2`, Moderator = `4`, VIP = `8`, Subscriber = `16`, P
 
 **--force-clear**
 (Default: `false`) Clears the default cache folder, bypassing the confirmation prompt.
+
+**--banner**
+(Default: `true`) Displays a banner containing version and copyright information.
 
 ---
 
@@ -347,7 +380,7 @@ Render a chat with custom video settings and message outlines
 
     TwitchDownloaderCLI chatrender -i chat.json -h 1440 -w 720 --framerate 60 --outline -o chat.mp4
 
-Render a chat with custom ffmpeg arguments
+Render a chat with custom FFmpeg arguments
 
     TwitchDownloaderCLI chatrender -i chat.json --output-args='-c:v libx264 -preset veryfast -crf 18 -pix_fmt yuv420p "{save_path}"' -o chat.mp4
 

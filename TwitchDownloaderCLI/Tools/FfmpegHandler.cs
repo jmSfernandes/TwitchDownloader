@@ -1,8 +1,12 @@
 ﻿using Mono.Unix;
 using System;
+using System.Collections.Concurrent;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
+using System.Threading;
 using TwitchDownloaderCLI.Modes.Arguments;
+using Xabe.FFmpeg;
 using Xabe.FFmpeg.Downloader;
 
 namespace TwitchDownloaderCLI.Tools
@@ -21,39 +25,81 @@ namespace TwitchDownloaderCLI.Tools
 
         private static void DownloadFfmpeg()
         {
-            Console.WriteLine("[INFO] - Downloading ffmpeg");
+            Console.Write("[INFO] - Downloading FFmpeg");
+
+            using var progressHandler = new XabeProgressHandler();
 
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-                FFmpegDownloader.GetLatestVersion(FFmpegVersion.Full).Wait();
+                FFmpegDownloader.GetLatestVersion(FFmpegVersion.Full, progressHandler).GetAwaiter().GetResult();
                 return;
             }
 
-            FFmpegDownloader.GetLatestVersion(FFmpegVersion.Official).Wait();
+            FFmpegDownloader.GetLatestVersion(FFmpegVersion.Official, progressHandler).GetAwaiter().GetResult();
+
+            Console.WriteLine();
+
             try
             {
                 var ffmpegFileInfo = new UnixFileInfo("ffmpeg")
                 {
-                    FileAccessPermissions = FileAccessPermissions.UserRead | FileAccessPermissions.UserWrite | FileAccessPermissions.GroupRead |  FileAccessPermissions.OtherRead |
+                    FileAccessPermissions = FileAccessPermissions.UserRead | FileAccessPermissions.UserWrite | FileAccessPermissions.GroupRead | FileAccessPermissions.OtherRead |
                                             FileAccessPermissions.UserExecute | FileAccessPermissions.GroupExecute | FileAccessPermissions.OtherExecute
                 };
                 ffmpegFileInfo.Refresh();
             }
             catch
             {
-                Console.WriteLine("[ERROR] - Unable to update ffmpeg file permissions. Run 'sudo chmod +x ffmpeg' if further ffmpeg errors occur.");
+                Console.WriteLine("[ERROR] - Unable to update FFmpeg file permissions. Run 'sudo chmod +x ffmpeg' if further FFmpeg errors occur.");
             }
         }
 
         public static void DetectFfmpeg(string ffmpegPath)
         {
-            if (File.Exists(FfmpegExecutableName) || PathExtensions.ExistsOnPath(FfmpegExecutableName) || File.Exists(ffmpegPath))
+            if (File.Exists(ffmpegPath) || File.Exists(FfmpegExecutableName) || PathUtils.ExistsOnPATH(FfmpegExecutableName))
             {
                 return;
             }
 
-            Console.WriteLine("[ERROR] - Unable to find ffmpeg, exiting. You can download ffmpeg automatically with the command \"TwitchDownloaderCLI ffmpeg -d\"");
+            Console.WriteLine("[ERROR] - Unable to find FFmpeg, exiting. You can download FFmpeg automatically with the command \"TwitchDownloaderCLI ffmpeg -d\"");
             Environment.Exit(1);
+        }
+
+        private sealed class XabeProgressHandler : IProgress<ProgressInfo>, IDisposable
+        {
+            private int _lastPercent = -1;
+            private readonly ConcurrentQueue<int> _percentQueue = new();
+            private readonly Timer _timer;
+
+            public XabeProgressHandler()
+            {
+                _timer = new Timer(Callback, _percentQueue, 0, 100);
+
+                static void Callback(object state)
+                {
+                    if (state is not ConcurrentQueue<int> { IsEmpty: false } queue) return;
+
+                    var currentPercent = queue.Max();
+                    Console.Write($"\r[INFO] - Downloading FFmpeg {currentPercent}%");
+                }
+            }
+
+            public void Report(ProgressInfo value)
+            {
+                var percent = (int)(value.DownloadedBytes / (double)value.TotalBytes * 100);
+
+                if (percent > _lastPercent)
+                {
+                    _lastPercent = percent;
+                    _percentQueue.Enqueue(percent);
+                }
+            }
+
+            public void Dispose()
+            {
+                _timer?.Dispose();
+                _percentQueue.Clear();
+            }
         }
     }
 }

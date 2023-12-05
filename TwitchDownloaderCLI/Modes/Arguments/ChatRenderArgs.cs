@@ -2,9 +2,8 @@
 
 namespace TwitchDownloaderCLI.Modes.Arguments
 {
-
     [Verb("chatrender", HelpText = "Renders a chat JSON as a video")]
-    public class ChatRenderArgs
+    public class ChatRenderArgs : ITwitchDownloaderArgs
     {
         [Option('i', "input", Required = true, HelpText = "Path to JSON chat file input.")]
         public string InputFile { get; set; }
@@ -84,10 +83,10 @@ namespace TwitchDownloaderCLI.Modes.Arguments
         [Option("update-rate", Default = 0.2, HelpText = "Time in seconds to update chat render output.")]
         public double UpdateRate { get; set; }
 
-        [Option("input-args", Default = "-framerate {fps} -f rawvideo -analyzeduration {max_int} -probesize {max_int} -pix_fmt {pix_fmt} -video_size {width}x{height} -i -", HelpText = "Input arguments for ffmpeg chat render.")]
+        [Option("input-args", Default = "-framerate {fps} -f rawvideo -analyzeduration {max_int} -probesize {max_int} -pix_fmt {pix_fmt} -video_size {width}x{height} -i -", HelpText = "Input arguments for FFmpeg chat render.")]
         public string InputArgs { get; set; }
 
-        [Option("output-args", Default = "-c:v libx264 -preset veryfast -crf 18 -pix_fmt yuv420p \"{save_path}\"", HelpText = "Output arguments for ffmpeg chat render.")]
+        [Option("output-args", Default = "-c:v libx264 -preset veryfast -crf 18 -pix_fmt yuv420p \"{save_path}\"", HelpText = "Output arguments for FFmpeg chat render.")]
         public string OutputArgs { get; set; }
 
         [Option("ignore-users", Default = "", HelpText = "List of usernames to ignore when rendering, separated by commas. Not case-sensitive.")]
@@ -99,7 +98,7 @@ namespace TwitchDownloaderCLI.Modes.Arguments
         [Option("badge-filter", Default = 0, HelpText = "Bitmask of types of Chat Badges to filter out. Add the numbers of the types of badges you want to filter. For example, 6 = no broadcaster or moderator badges.\r\nKey: Other = 1, Broadcaster = 2, Moderator = 4, VIP = 8, Subscriber = 16, Predictions = 32, NoAudio/NoVideo = 64, PrimeGaming = 128")]
         public int BadgeFilterMask { get; set; }
 
-        [Option("dispersion", Default = false, HelpText = "In November 2022 a Twitch API change made chat messages download only in whole seconds. If there are multiple messages on a second, they will be intelligently distributed over the second to improve chat flow. Requires an update rate less than 1.0 for effective results.")]
+        [Option("dispersion", Default = false, HelpText = "In November 2022 a Twitch API change made chat messages download only in whole seconds. This option uses additional metadata to attempt to restore messages to when they were actually sent. This may result in a different comment order. Requires an update rate less than 1.0 for effective results.")]
         public bool DisperseCommentOffsets { get; set; }
 
         [Option("alternate-backgrounds", Default = false, HelpText = "Alternates the background color of every other chat message to help tell them apart.")]
@@ -111,13 +110,13 @@ namespace TwitchDownloaderCLI.Modes.Arguments
         [Option("emoji-vendor", Default = "notocolor", HelpText = "The emoji vendor used for rendering emojis. Valid values are: 'twitter' / 'twemoji', 'google' / 'notocolor', and 'system' / 'none'.")]
         public string EmojiVendor { get; set; }
 
-        [Option("ffmpeg-path", HelpText = "Path to ffmpeg executable.")]
+        [Option("ffmpeg-path", HelpText = "Path to FFmpeg executable.")]
         public string FfmpegPath { get; set; }
 
         [Option("temp-path", Default = "", HelpText = "Path to temporary folder to use for cache.")]
         public string TempFolder { get; set; }
 
-        [Option("verbose-ffmpeg", Default = false, HelpText = "Prints every message from ffmpeg.")]
+        [Option("verbose-ffmpeg", Default = false, HelpText = "Prints every message from FFmpeg.")]
         public bool LogFfmpegOutput { get; set; }
 
         [Option("skip-drive-waiting", Default = false, HelpText = "Do not wait for the output drive to transmit a ready signal before writing the next frame. Waiting is usually only necessary on low-end USB drives.")]
@@ -152,5 +151,8 @@ namespace TwitchDownloaderCLI.Modes.Arguments
 
         [Option("scale-highlight-indent", Default = 1.0, HelpText = "Number to scale highlight indent size (sub messages).")]
         public double ScaleAccentIndent { get; set; }
+
+        [Option("banner", Default = true, HelpText = "Displays a banner containing version and copyright information.")]
+        public bool? ShowBanner { get; set; }
     }
 }

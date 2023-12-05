@@ -1,7 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
@@ -121,7 +119,11 @@ namespace TwitchDownloaderWPF
 
         private void btnSettings_Click(object sender, RoutedEventArgs e)
         {
-            WindowSettings settings = new WindowSettings();
+            var settings = new WindowSettings
+            {
+                Owner = Application.Current.MainWindow,
+                WindowStartupLocation = WindowStartupLocation.CenterOwner
+            };
             settings.ShowDialog();
             btnDonate.Visibility = Settings.Default.HideDonation ? Visibility.Collapsed : Visibility.Visible;
         }
@@ -169,19 +171,31 @@ namespace TwitchDownloaderWPF
 
         private void btnUrlList_Click(object sender, RoutedEventArgs e)
         {
-            WindowUrlList window = new WindowUrlList();
+            var window = new WindowUrlList
+            {
+                Owner = Application.Current.MainWindow,
+                WindowStartupLocation = WindowStartupLocation.CenterOwner
+            };
             window.ShowDialog();
         }
 
         private void btnVods_Click(object sender, RoutedEventArgs e)
         {
-            WindowMassDownload window = new WindowMassDownload(DownloadType.Video);
+            var window = new WindowMassDownload(DownloadType.Video)
+            {
+                Owner = Application.Current.MainWindow,
+                WindowStartupLocation = WindowStartupLocation.CenterOwner
+            };
             window.ShowDialog();
         }
 
         private void btnClips_Click(object sender, RoutedEventArgs e)
         {
-            WindowMassDownload window = new WindowMassDownload(DownloadType.Clip);
+            var window = new WindowMassDownload(DownloadType.Clip)
+            {
+                Owner = Application.Current.MainWindow,
+                WindowStartupLocation = WindowStartupLocation.CenterOwner
+            };
             window.ShowDialog();
         }
 
@@ -204,7 +218,7 @@ namespace TwitchDownloaderWPF
 
         private void btnTaskError_Click(object sender, RoutedEventArgs e)
         {
-            if (!(sender is Button { DataContext: ITwitchTask task }))
+            if (sender is not Button { DataContext: ITwitchTask task })
             {
                 return;
             }
@@ -222,12 +236,12 @@ namespace TwitchDownloaderWPF
                 errorMessage = taskException.Exception.ToString();
             }
 
-            MessageBox.Show(errorMessage, Translations.Strings.TaskError, MessageBoxButton.OK, MessageBoxImage.Error);
+            MessageBox.Show(errorMessage, Translations.Strings.MessageBoxTitleError, MessageBoxButton.OK, MessageBoxImage.Error);
         }
 
         private void btnRemoveTask_Click(object sender, RoutedEventArgs e)
         {
-            if (!(sender is Button { DataContext: ITwitchTask task }))
+            if (sender is not Button { DataContext: ITwitchTask task })
             {
                 return;
             }

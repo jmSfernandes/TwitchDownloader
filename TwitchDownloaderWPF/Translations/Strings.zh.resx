@@ -282,7 +282,7 @@
     <value>输入参数：</value>
   </data>
   <data name="FfmpegOptionsHyperlink" xml:space="preserve">
-    <value>点击了解Ffmpeg设定</value>
+    <value>点击了解FFmpeg设定</value>
   </data>
   <data name="FfmpegOutputArguments" xml:space="preserve">
     <value>输出参数：</value>
@@ -298,7 +298,7 @@
     <value>FFZ Emotes:</value>
   </data>
   <data name="FilenameTemplateParameters" xml:space="preserve">
-    <value>{title} {id} {date} {channel} {date_custom=""} {random_string} {crop_start} {crop_end} {crop_start_custom=""} {crop_end_custom=""}</value>
+    <value>{title} {id} {date} {channel} {date_custom=""} {random_string} {crop_start} {crop_end} {crop_start_custom=""} {crop_end_custom=""} {length} {length_custom=""} {views} {game}</value>
     <comment>Do not translate</comment>
   </data>
   <data name="FontColor" xml:space="preserve">
@@ -398,7 +398,7 @@
     <value>解码</value>
   </data>
   <data name="RenderTabFfmpeg" xml:space="preserve">
-    <value>Ffmpeg</value>
+    <value>FFmpeg</value>
   </data>
   <data name="RenderTabGeneral" xml:space="preserve">
     <value>通用</value>
@@ -470,7 +470,7 @@
   <data name="TaskCancel" xml:space="preserve">
     <value>取消</value>
   </data>
-  <data name="TaskError" xml:space="preserve">
+  <data name="TaskErrorButton" xml:space="preserve">
     <value>错误</value>
   </data>
   <data name="TaskQueue" xml:space="preserve">
@@ -732,12 +732,78 @@
     <value>边框比例：</value>
   </data>
   <data name="TimeSpanCustomFormatting" xml:space="preserve">
-    <value>crop_start_custom和crop_end_custom格式基于</value>
+    <value>crop_start_custom、crop_end_custom和length_custom格式基于</value>
   </data>
   <data name="TimeSpanCustomFormattingHyperlink" xml:space="preserve">
     <value>C#标准的时间跨度格式字符串</value>
   </data>
+  <data name="UnknownErrorOccurred" xml:space="preserve">
+    <value>An unknown error occurred</value>
+  </data>
+  <data name="TaskCouldNotBeRemoved" xml:space="preserve">
+    <value>The task could not be removed</value>
+  </data>
+  <data name="CancelTaskBeforeRemoving" xml:space="preserve">
+    <value>Please cancel the task or wait for it to finish before removing it</value>
+  </data>
+  <data name="UnableToDownloadFfmpeg" xml:space="preserve">
+    <value>Unable to download FFmpeg</value>
+  </data>
+  <data name="UnableToDownloadFfmpegFull" xml:space="preserve">
+    <value>Unable to download FFmpeg. Please manually download it from {0} and place the file at {1}</value>
+  </data>
+  <data name="AlternateBackgroundColor" xml:space="preserve">
+    <value>Alt Background Color:</value>
+  </data>
   <data name="AlternateMessageBackgrounds" xml:space="preserve">
     <value>Alternate Backgrounds </value><comment>Leave a trailing space</comment>
+  </data>
+  <data name="AlternateMessageBackgroundsTooltip" xml:space="preserve">
+    <value>Alternates the background color of every other chat message to help tell them apart.</value>
+  </data>
+  <data name="EncodeClipMetadata" xml:space="preserve">
+    <value>Encode Metadata:</value>
+  </data>
+  <data name="MessageBoxTitleError" xml:space="preserve">
+    <value>错误</value>
+  </data>
+  <data name="UnableToStartWindowsThemeWatcher" xml:space="preserve">
+    <value>Unable to start Windows application theme watcher. Error code: {0}</value>
+  </data>
+  <data name="LabelVideosPerPage" xml:space="preserve">
+    <value>Videos per page:</value>
+  </data>
+  <data name="StatusDownloaderFFmpeg" xml:space="preserve">
+    <value>Downloading FFmpeg {0}%</value>
+  </data>
+  <data name="CopyVideoIDToClipboard" xml:space="preserve">
+    <value>Copy ID to clipboard</value>
+  </data>
+  <data name="CopyVideoURLToClipboard" xml:space="preserve">
+    <value>Copy URL to clipboard</value>
+  </data>
+  <data name="OpenVideoInBrowser" xml:space="preserve">
+    <value>Open in browser</value>
+  </data>
+  <data name="ResetSettingsConfirmationMessage" xml:space="preserve">
+    <value>Are you sure you want to restore all settings to their default values?</value>
+  </data>
+  <data name="ResetSettingsConfirmation" xml:space="preserve">
+    <value>Restore Settings Confirmation</value>
+  </data>
+  <data name="TheApplicationMustBeRestartedMessage" xml:space="preserve">
+    <value>The application must be restarted for changes to take effect.</value>
+  </data>
+  <data name="RestartTheApplication" xml:space="preserve">
+    <value>Please restart {0}</value><comment>{0} is the name of the application.</comment>
+  </data>
+  <data name="ButtonRestoreDefaultSettings" xml:space="preserve">
+    <value>Restore Defaults</value>
+  </data>
+  <data name="ButtonSaveSettings" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="ButtonCancelSettingsChanges" xml:space="preserve">
+    <value>Cancel</value>
   </data>
 </root>

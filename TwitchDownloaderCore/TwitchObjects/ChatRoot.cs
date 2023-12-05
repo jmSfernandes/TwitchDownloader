@@ -11,7 +11,7 @@ namespace TwitchDownloaderCore.TwitchObjects
         public int id { get; set; }
     }
 
-    [DebuggerDisplay("display_name: {display_name}")]
+    [DebuggerDisplay("{display_name}")]
     public class Commenter
     {
         public string display_name { get; set; }
@@ -37,11 +37,13 @@ namespace TwitchDownloaderCore.TwitchObjects
         }
     }
 
+    [DebuggerDisplay("{emoticon_id}")]
     public class Emoticon
     {
         public string emoticon_id { get; set; }
     }
 
+    [DebuggerDisplay("{text}")]
     public class Fragment
     {
         public string text { get; set; }
@@ -57,6 +59,7 @@ namespace TwitchDownloaderCore.TwitchObjects
         }
     }
 
+    [DebuggerDisplay("{_id}")]
     public class UserBadge
     {
         public string _id { get; set; }
@@ -72,6 +75,7 @@ namespace TwitchDownloaderCore.TwitchObjects
         }
     }
 
+    [DebuggerDisplay("{_id}")]
     public class Emoticon2
     {
         public string _id { get; set; }
@@ -89,7 +93,7 @@ namespace TwitchDownloaderCore.TwitchObjects
         }
     }
 
-    [DebuggerDisplay("body: {body}")]
+    [DebuggerDisplay("{body}")]
     public class Message
     {
         public string body { get; set; }
@@ -129,6 +133,7 @@ namespace TwitchDownloaderCore.TwitchObjects
         }
     }
 
+    [DebuggerDisplay("{msg_id}")]
     public class UserNoticeParams
     {
         public string msg_id { get; set; }
@@ -142,6 +147,7 @@ namespace TwitchDownloaderCore.TwitchObjects
         }
     }
 
+    [DebuggerDisplay("{commenter} {message}")]
     public class Comment
     {
         public string _id { get; set; }
@@ -187,26 +193,30 @@ namespace TwitchDownloaderCore.TwitchObjects
     public class Video
     {
         public string title { get; set; }
+        public string description { get; set; }
         public string id { get; set; }
         public DateTime created_at { get; set; }
         public double start { get; set; }
         public double end { get; set; }
         public double length { get; set; } = -1;
+        public int viewCount { get; set; }
+        public string game { get; set; }
         public List<VideoChapter> chapters { get; set; } = new();
 
 #region DeprecatedProperties
-        /// <summary>Deprecated. Used only by chats from before 8d521f7a78222bec187b56c3c747909d240add21.</summary>
+        [Obsolete("Used only by chats from before 8d521f7a78222bec187b56c3c747909d240add21.")]
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public string duration { get; set; } = null;
-        /// <summary>Deprecated. Used only by chats from before 8d521f7a78222bec187b56c3c747909d240add21.</summary>
+        [Obsolete("Used only by chats from before 8d521f7a78222bec187b56c3c747909d240add21.")]
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public string user_id { get; set; } = null;
-        /// <summary>Deprecated. Used only by chats from before 8d521f7a78222bec187b56c3c747909d240add21.</summary>
+        [Obsolete("Used only by chats from before 8d521f7a78222bec187b56c3c747909d240add21.")]
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public string user_name { get; set; } = null;
 #endregion
     }
 
+    [DebuggerDisplay("{name}")]
     public class EmbedEmoteData
     {
         public string id { get; set; }
@@ -218,12 +228,14 @@ namespace TwitchDownloaderCore.TwitchObjects
         public int height { get; set; }
     }
 
+    [DebuggerDisplay("{name}")]
     public class EmbedChatBadge
     {
         public string name { get; set; }
         public Dictionary<string, ChatBadgeData> versions { get; set; }
     }
 
+    [DebuggerDisplay("{name}")]
     public class LegacyEmbedChatBadge
     {
         public string name { get; set; }
@@ -232,6 +244,7 @@ namespace TwitchDownloaderCore.TwitchObjects
         public Dictionary<string, string> urls { get; set; }
     }
 
+    [DebuggerDisplay("{prefix}")]
     public class EmbedCheerEmote
     {
         public string prefix { get; set; }

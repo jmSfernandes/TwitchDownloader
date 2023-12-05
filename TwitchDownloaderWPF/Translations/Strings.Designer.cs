@@ -213,6 +213,33 @@ namespace TwitchDownloaderWPF.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cancel.
+        /// </summary>
+        public static string ButtonCancelSettingsChanges {
+            get {
+                return ResourceManager.GetString("ButtonCancelSettingsChanges", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Restore Defaults.
+        /// </summary>
+        public static string ButtonRestoreDefaultSettings {
+            get {
+                return ResourceManager.GetString("ButtonRestoreDefaultSettings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Save.
+        /// </summary>
+        public static string ButtonSaveSettings {
+            get {
+                return ResourceManager.GetString("ButtonSaveSettings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cache Folder:.
         /// </summary>
         public static string CacheFolder {
@@ -416,6 +443,24 @@ namespace TwitchDownloaderWPF.Translations {
         public static string ClipLinkId {
             get {
                 return ResourceManager.GetString("ClipLinkId", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Copy ID to clipboard.
+        /// </summary>
+        public static string CopyVideoIDToClipboard {
+            get {
+                return ResourceManager.GetString("CopyVideoIDToClipboard", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Copy URL to clipboard.
+        /// </summary>
+        public static string CopyVideoURLToClipboard {
+            get {
+                return ResourceManager.GetString("CopyVideoURLToClipboard", resourceCulture);
             }
         }
         
@@ -654,6 +699,15 @@ namespace TwitchDownloaderWPF.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Encode Metadata:.
+        /// </summary>
+        public static string EncodeClipMetadata {
+            get {
+                return ResourceManager.GetString("EncodeClipMetadata", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Enqueue Download.
         /// </summary>
         public static string EnqueueDownload {
@@ -708,7 +762,7 @@ namespace TwitchDownloaderWPF.Translations {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Click here to learn about Ffmpeg options.
+        ///   Looks up a localized string similar to Click here to learn about FFmpeg options.
         /// </summary>
         public static string FfmpegOptionsHyperlink {
             get {
@@ -753,7 +807,7 @@ namespace TwitchDownloaderWPF.Translations {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {title} {id} {date} {channel} {date_custom=&quot;&quot;} {random_string} {crop_start} {crop_end} {crop_start_custom=&quot;&quot;} {crop_end_custom=&quot;&quot;}.
+        ///   Looks up a localized string similar to {title} {id} {date} {channel} {date_custom=&quot;&quot;} {random_string} {crop_start} {crop_end} {crop_start_custom=&quot;&quot;} {crop_end_custom=&quot;&quot;} {length} {length_custom=&quot;&quot;} {views} {game}.
         /// </summary>
         public static string FilenameTemplateParameters {
             get {
@@ -933,6 +987,15 @@ namespace TwitchDownloaderWPF.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Videos per page:.
+        /// </summary>
+        public static string LabelVideosPerPage {
+            get {
+                return ResourceManager.GetString("LabelVideosPerPage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Length:.
         /// </summary>
         public static string Length {
@@ -996,6 +1059,15 @@ namespace TwitchDownloaderWPF.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Error.
+        /// </summary>
+        public static string MessageBoxTitleError {
+            get {
+                return ResourceManager.GetString("MessageBoxTitleError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Dispersion .
         /// </summary>
         public static string MessageDispersion {
@@ -1005,7 +1077,7 @@ namespace TwitchDownloaderWPF.Translations {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to In November 2022 a Twitch API change made chat messages download only in whole seconds. If there are multiple messages on a second, they will be intelligently distributed over the second to improve chat flow..
+        ///   Looks up a localized string similar to In November 2022 a Twitch API change made chat messages download only in whole seconds. This option uses additional metadata to attempt to restore messages to when they were actually sent. This may result in a different comment order..
         /// </summary>
         public static string MessageDispersionTooltip {
             get {
@@ -1055,6 +1127,15 @@ namespace TwitchDownloaderWPF.Translations {
         public static string OfflineTooltip {
             get {
                 return ResourceManager.GetString("OfflineTooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Open in browser.
+        /// </summary>
+        public static string OpenVideoInBrowser {
+            get {
+                return ResourceManager.GetString("OpenVideoInBrowser", resourceCulture);
             }
         }
         
@@ -1176,7 +1257,7 @@ namespace TwitchDownloaderWPF.Translations {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Ffmpeg.
+        ///   Looks up a localized string similar to FFmpeg.
         /// </summary>
         public static string RenderTabFfmpeg {
             get {
@@ -1244,6 +1325,33 @@ namespace TwitchDownloaderWPF.Translations {
         public static string ReplaceEmbedsTooltip {
             get {
                 return ResourceManager.GetString("ReplaceEmbedsTooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Restore Settings Confirmation.
+        /// </summary>
+        public static string ResetSettingsConfirmation {
+            get {
+                return ResourceManager.GetString("ResetSettingsConfirmation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Are you sure you want to restore all settings to their default values?.
+        /// </summary>
+        public static string ResetSettingsConfirmationMessage {
+            get {
+                return ResourceManager.GetString("ResetSettingsConfirmationMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Please restart {0}.
+        /// </summary>
+        public static string RestartTheApplication {
+            get {
+                return ResourceManager.GetString("RestartTheApplication", resourceCulture);
             }
         }
         
@@ -1356,6 +1464,15 @@ namespace TwitchDownloaderWPF.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Downloading FFmpeg {0}%.
+        /// </summary>
+        public static string StatusDownloaderFFmpeg {
+            get {
+                return ResourceManager.GetString("StatusDownloaderFFmpeg", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Downloading.
         /// </summary>
         public static string StatusDownloading {
@@ -1448,9 +1565,9 @@ namespace TwitchDownloaderWPF.Translations {
         /// <summary>
         ///   Looks up a localized string similar to Error.
         /// </summary>
-        public static string TaskError {
+        public static string TaskErrorButton {
             get {
-                return ResourceManager.GetString("TaskError", resourceCulture);
+                return ResourceManager.GetString("TaskErrorButton", resourceCulture);
             }
         }
         
@@ -1487,6 +1604,15 @@ namespace TwitchDownloaderWPF.Translations {
         public static string TemplateVods {
             get {
                 return ResourceManager.GetString("TemplateVods", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The application must be restarted for changes to take effect..
+        /// </summary>
+        public static string TheApplicationMustBeRestartedMessage {
+            get {
+                return ResourceManager.GetString("TheApplicationMustBeRestartedMessage", resourceCulture);
             }
         }
         
@@ -1536,7 +1662,7 @@ namespace TwitchDownloaderWPF.Translations {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to crop_start_custom and crop_end_custom formattings are based on the.
+        ///   Looks up a localized string similar to crop_start_custom, crop_end_custom, and length_custom formattings are based on the.
         /// </summary>
         public static string TimeSpanCustomFormatting {
             get {
@@ -1698,7 +1824,7 @@ namespace TwitchDownloaderWPF.Translations {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Unable to download ffmpeg.
+        ///   Looks up a localized string similar to Unable to download FFmpeg.
         /// </summary>
         public static string UnableToDownloadFfmpeg {
             get {
@@ -1707,7 +1833,7 @@ namespace TwitchDownloaderWPF.Translations {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Unable to download ffmpeg. Please manually download it from {0} and place the file at {1}.
+        ///   Looks up a localized string similar to Unable to download FFmpeg. Please manually download it from {0} and place the file at {1}.
         /// </summary>
         public static string UnableToDownloadFfmpegFull {
             get {
@@ -1793,6 +1919,15 @@ namespace TwitchDownloaderWPF.Translations {
         public static string UnableToParseLinkMessage {
             get {
                 return ResourceManager.GetString("UnableToParseLinkMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unable to start Windows application theme watcher. Real-time Windows theme synchronization has been disabled. Error code: {0}.
+        /// </summary>
+        public static string UnableToStartWindowsThemeWatcher {
+            get {
+                return ResourceManager.GetString("UnableToStartWindowsThemeWatcher", resourceCulture);
             }
         }
         
