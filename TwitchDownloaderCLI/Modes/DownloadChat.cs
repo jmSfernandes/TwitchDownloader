@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using TwitchDownloaderCLI.Modes.Arguments;
@@ -19,7 +20,15 @@ namespace TwitchDownloaderCLI.Modes
             ChatDownloader chatDownloader = new(downloadOptions);
             Progress<ProgressReport> progress = new();
             progress.ProgressChanged += ProgressHandler.Progress_ProgressChanged;
-            chatDownloader.DownloadAsync(progress, new CancellationToken()).Wait();
+            try
+            {
+                chatDownloader.DownloadAsync(progress, new CancellationToken()).Wait();
+            }
+            catch (AggregateException ae)
+            {
+                var stackTrace = ae.InnerExceptions.Aggregate("", (s, exception) => s = $"{s}\n{exception.ToString()}");
+                throw new Exception(stackTrace);
+            }
         }
 
         private static ChatDownloadOptions GetDownloadOptions(ChatDownloadArgs inputOptions)
@@ -62,9 +71,9 @@ namespace TwitchDownloaderCLI.Modes
                 TimeFormat = inputOptions.TimeFormat,
                 ConnectionCount = inputOptions.ChatConnections,
                 Quiet = inputOptions.Quiet,
-                BttvEmotes = (bool)inputOptions.BttvEmotes!,
-                FfzEmotes = (bool)inputOptions.FfzEmotes!,
-                StvEmotes = (bool)inputOptions.StvEmotes!,
+                BttvEmotes = (bool) inputOptions.BttvEmotes!,
+                FfzEmotes = (bool) inputOptions.FfzEmotes!,
+                StvEmotes = (bool) inputOptions.StvEmotes!,
                 TempFolder = inputOptions.TempFolder
             };
 
